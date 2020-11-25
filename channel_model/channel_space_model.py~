@@ -1,0 +1,68 @@
+################################################################################
+# 
+# This is a transmission model for distributed
+# devices
+# 
+################################################################################
+#! /usr/bin/python3
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+import tx_distribution as TX_distri
+import  channel_model
+
+def txs_to_target_channel(txs, targets_loc, wave_len):
+
+    H = np.zeros([np.size(targets_loc, 1), np.size(txs['loc'], 1)])
+    for index in range(np.size(targets_loc, 1)):
+        d_vec = np.sqrt((txs['loc'][0] - targets_loc[0][index])**2 + (txs['loc'][1] - targets_loc[1][index])**2)
+        H[index][:] = channel_model.free_space_channel(d_vec, wave_len)
+
+    return H
+
+def phase_alignment(H):
+
+    txs_phase = np.exp(-1j * np.angle(H))
+
+    return txs_phase
+
+def main():
+
+    # Wireless parameters
+    f = 900e6
+    c = 3e8
+    wave_len = c / f	
+
+    N_txs = 32                      # Number of TXs
+    target_loc = [[D/2, D/4], [D/2, D/4]]     # TXs focus energy on the target
+
+    # RoI parameters
+    D = 10      # Region of interest
+    R = 0.1     # Resolution of RoI
+    interval = 2    # Interval between TXs and RoI
+
+    # Transmission model
+    TXs_loc = TX_distri.rectangle_distribution(N_txs, D, interval)
+    distri_TXs = {'loc': TXs_loc, 'power': np.ones([1, N_txs]), 'phase': np.ones([1, N_txs])}
+
+    H = txs_to_target_channel(distri_TXs, target_loc, wave_len)
+    distri_TXs['phase'] = phase_alignment(H)
+
+    received_power_distri_mat = channel_model.pass_loss_in_RoI(distri_TXs, wave_len, D, R)
+    received_power_distri_vec = np.sort(np.reshape(received_power_distri_mat, -1))
+
+    # Plot
+    fig, ax = plt.subplots()
+    im = ax.imshow(received_power_distri_mat, extent=(0, D, 0, D))
+    ax.figure.colorbar(im, ax=ax)
+
+    plt.figure()
+    plt.plot(received_power_distri_vec)
+    plt.scatter(target_loc[0], target_loc[1])
+    plt.show()
+
+
+if __name__ == "__main__":
+   
+    main()
