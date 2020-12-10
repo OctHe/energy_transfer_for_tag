@@ -24,7 +24,7 @@ Hf = rand(Ntags, Ntxs) .* exp(2j * pi * rand(Ntags, Ntxs));
 Hb = rand(1, Ntags) .* exp(2j * pi * rand(1, Ntags));
 
 %% RSS probe generation and signal reflection
-weight_mat = PhaseMatrixGenerator(Ntxs, Rp);
+weight_mat = generator_phase_mat(Ntxs, Rp);
 pre_tx = kron(ones(1, Ntags), weight_mat);
 pre_tag = kron(eye(Ntags), ones(1, Rp^(Ntxs-1)));
 
@@ -45,7 +45,7 @@ end
 %% Phase alignment
 [~, bf_index] = max(min(estimated_channel, [], 1));
 
-weight_mat = PhaseMatrixGenerator(Ntxs, Rp);
+weight_mat = generator_phase_mat(Ntxs, Rp);
 bf_weight = weight_mat(:, bf_index);
 
 

@@ -8,7 +8,7 @@ close all;
 
 % Params
 Ntxs = 4;
-Ntags = 4;
+Ntags = 8;
 
 Res = 8;
 
@@ -36,7 +36,7 @@ for Index = 1: Ntags
 end
 
 % Tag grouping
-[Group, CosMatRX] = TagGroupingAlgo(RelatPowerY, Ntxs, Res, Ng);
+[Group, CosMatRX] = tag_grouping_hc(RelatPowerY, Ntxs, Res);
 Group
 
 % Phase alignment
