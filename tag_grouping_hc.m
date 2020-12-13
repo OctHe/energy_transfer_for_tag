@@ -12,7 +12,7 @@ function [GroupMat, CosMatRX] = tag_grouping_hc(power, Ntxs, Rp)
 
 % Params
 Ntags = size(power, 1);
-W = PhaseMatrixGenerator(Ntxs, Rp);
+W = generator_phase_mat(Ntxs, Rp);
 
 % Correlation
 ChIndexMat = zeros(Ntags, 1);

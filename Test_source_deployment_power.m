@@ -1,11 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Channel distribution in space domain
+% Test of different deployment of the power source
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear;
 close all;
 
+%% Params
 Res = 0.01;         % Resolution
 InitLoc = 0.01;
 D = 12;
@@ -24,29 +25,29 @@ cdf_x_axis = repmat((0: cdf_res: 10).', 1, length(N));
 cdf_y_axis = zeros(size(cdf_x_axis));
 
 for Index1 = 1: length(N)
-    % Distibuted devices
-    RelativeLoc = device_distribution(InitLoc, D, N(Index1), sign);
+    %% Distibuted devices
+    source_loc = device_deployment(InitLoc, D, N(Index1), sign);
     
     RefMatX = repmat(Res: Res: D, M, 1);
     RefMatY = repmat((Res: Res: D).', 1, M);
     DistMat = zeros(M, M);  % Distance matrix
     ChMat = zeros(M, M);  % Channel matrix
 
+    %% Received power of all devices
     for Index2 = 1: N(Index1)
-        DistMat = sqrt((RefMatX - RelativeLoc(1, Index2)).^2 + (RefMatY - RelativeLoc(2, Index2)).^2);
+        DistMat = sqrt((RefMatX - source_loc(1, Index2)).^2 + (RefMatY - source_loc(2, Index2)).^2);
         ChMat = ChMat + 1 ./ DistMat;
     end
     
     ChMatBias = ChMat((Bias/Res+1): (M - Bias/Res), (Bias/Res+1): (M-Bias/Res));
     ChMatBias = 10 * log10(abs(ChMatBias).^2);     % dB
 
-    figure; hold on;
-    mesh(Res: Res: (D-2*Bias), Res: Res: (D-2*Bias), ChMatBias);
-    colorbar;
-    colormap('hot');
+%     figure; hold on;
+%     mesh(Res: Res: (D-2*Bias), Res: Res: (D-2*Bias), ChMatBias);
+%     colorbar;
+%     colormap('hot');
     
     for Index2 = 1: length(cdf_x_axis)
-        
         ChannelIndicator = ChMatBias > cdf_x_axis(Index2);
         cdf_y_axis(Index2, Index1) = sum(sum(ChannelIndicator)) / (M * M);
     end

@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Unit test of tag group
+% Test of tag grouping based on the hierarchical clustering algorithm
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear;
@@ -19,7 +19,7 @@ Hf = rand(Ntags, Ntxs) .* exp(2j * pi * rand(Ntags, Ntxs));
 Hb = rand(1, Ntags) .* exp(2j * pi * rand(1, Ntags));
 
 % RSS prober generator
-W = PhaseMatrixGenerator(Ntxs, Res);
+W = generator_phase_mat(Ntxs, Res);
 Ptx = kron(ones(1, Ntags), W);
 Ptag = kron(eye(Ntags), ones(1, Res^(Ntxs-1)));
 
@@ -30,14 +30,10 @@ Y = reshape(Y.', [], Ntags).';
 
 % Received power
 PowerY = abs(Y).^2;
-RelatPowerY = zeros(size(PowerY));
-for Index = 1: Ntags
-    RelatPowerY(Index, :) = PowerY(Index, :) / max(PowerY(Index, :));
-end
 
 % Tag grouping
-[Group, CosMatRX] = tag_grouping_hc(RelatPowerY, Ntxs, Res);
+[Group, CosMatRX] = tag_grouping_hc(PowerY, Ntxs, Res);
 Group
 
 % Phase alignment
-[~, APIndex] = max(min(RelatPowerY, [], 1));
+[~, APIndex] = max(min(PowerY, [], 1));

@@ -39,9 +39,9 @@ Y = reshape(Y, [], Ntags).';
 Nloop = 1e7;
 
 rx_rssi = abs(Y).^2;
-estimated_channel = zeros(Ntags, Ntxs);
+est_channel = zeros(Ntags, Ntxs);
 for Ntag_index = 1: Ntags
-    [estimated_channel(Ntag_index, :), ~] = ...
+    [est_channel(Ntag_index, :), ~] = ...
         codebook_ce_mmse(rx_rssi(Ntag_index, :), weight_mat, Ntxs, Nloop);
     
 end
@@ -49,17 +49,17 @@ end
 %% Evaluation
 for Ntag_index = 1: Ntags 
     truth_channel_buf = truth_channel(Ntag_index, :);
-    estimated_channel_buf = estimated_channel(Ntag_index, :);
+    est_channel_buf = est_channel(Ntag_index, :);
     
-    ce_corr(Ntag_index) = abs(estimated_channel_buf * truth_channel_buf').^2 / ...
-    abs(estimated_channel_buf * estimated_channel_buf') / ...
+    ce_corr(Ntag_index) = abs(est_channel_buf * truth_channel_buf').^2 / ...
+    abs(est_channel_buf * est_channel_buf') / ...
     abs(truth_channel_buf * truth_channel_buf');
     
-    ce_mse(Ntag_index) = norm(estimated_channel_buf - truth_channel_buf).^2;
+    ce_mse(Ntag_index) = norm(est_channel_buf - truth_channel_buf).^2;
     
     figure; hold on;
     plot(abs(truth_channel_buf * weight_mat).');
-    plot(abs(estimated_channel_buf * weight_mat).');
+    plot(abs(est_channel_buf * weight_mat).');
     
 end
 

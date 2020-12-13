@@ -1,46 +1,53 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Device distribution for N devices
+% Device distribution for N devices. This function returns the localization
+% of the power sources.
+% init_loc: the initial localization in the region of interest (RoI)
+% D: the side length of the RoI (DxD)
+% N: the number of power sources
+% sign: true (distributed deployment); false (centralized deployment)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function RelativeLoc = device_deployment(InitLoc, D, N, sign)
+function source_loc = device_deployment(init_loc, D, N, type)
 
-if sign
+if type == "rectangle"
 
-switch N
-    case 8
-    RelativeLoc = [
-        InitLoc, InitLoc, InitLoc, D / 2, D / 2, D - InitLoc, D - InitLoc, D - InitLoc;
-        InitLoc, D / 2, D - InitLoc, InitLoc, D - InitLoc, InitLoc, D / 2, D - InitLoc];
-    case 4
-        RelativeLoc = [
-        InitLoc, InitLoc, D - InitLoc, D - InitLoc;
-        InitLoc, D - InitLoc, InitLoc, D - InitLoc];
-    case 12
-        Interval = (D - 2 * InitLoc) / 3;
+    switch N
+        case 4
+            source_loc = [
+            init_loc, init_loc, D - init_loc, D - init_loc;
+            init_loc, D - init_loc, init_loc, D - init_loc];
         
-        RelativeLoc(:, 1: 4) = [
-        InitLoc, InitLoc, InitLoc, InitLoc;
-        InitLoc, InitLoc + Interval, D - InitLoc - Interval, D - InitLoc];
-        
-        RelativeLoc(:, 5: 8) = [
-        InitLoc + Interval, D - InitLoc - Interval, InitLoc + Interval, D - InitLoc - Interval;
-        InitLoc, InitLoc, D - InitLoc, D - InitLoc];
+        case 8
+        source_loc = [
+            init_loc, init_loc, init_loc, D / 2, D / 2, D - init_loc, D - init_loc, D - init_loc;
+            init_loc, D / 2, D - init_loc, init_loc, D - init_loc, init_loc, D / 2, D - init_loc];
+
+        case 12
+            Interval = (D - 2 * init_loc) / 3;
+
+            source_loc(:, 1: 4) = [
+            init_loc, init_loc, init_loc, init_loc;
+            init_loc, init_loc + Interval, D - init_loc - Interval, D - init_loc];
+
+            source_loc(:, 5: 8) = [
+            init_loc + Interval, D - init_loc - Interval, init_loc + Interval, D - init_loc - Interval;
+            init_loc, init_loc, D - init_loc, D - init_loc];
+
+            source_loc(:, 9: 12) = [
+            D - init_loc, D - init_loc, D - init_loc, D - init_loc;
+            init_loc, init_loc + Interval, D - init_loc - Interval, D - init_loc];
+
+        otherwise
+            error('N must be 4, 8, 12');
+    end
     
-        RelativeLoc(:, 9: 12) = [
-        D - InitLoc, D - InitLoc, D - InitLoc, D - InitLoc;
-        InitLoc, InitLoc + Interval, D - InitLoc - Interval, D - InitLoc];
+elseif type == "centralized"
+    Interval = (D - 2 * init_loc);
+    
+    source_loc = zeros(2, N);
+    source_loc(1, :) = init_loc: (Interval / (N-1)): D - init_loc;
 
-    otherwise
-        error('N must be 4, 8, 12');
-end
 else
-    Interval = (D - 2 * InitLoc);
-    
-    RelativeLoc = zeros(2, N);
-    RelativeLoc(1, :) = InitLoc: (Interval / (N-1)): D - InitLoc;
-% % MIMO antennas
-% RelativeLoc =[
-%     zeros(1, 8); 
-%     (0.5: 1: 7.5) / 8 * D];
+    error("type: rectangle; centralized");
 end
