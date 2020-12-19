@@ -13,6 +13,9 @@ function source_loc = device_deployment(init_loc, D, N, type)
 if type == "rectangle"
 
     switch N
+        case 2
+            source_loc = [init_loc, D - init_loc; D / 2, D / 2];
+            
         case 4
             source_loc = [
             init_loc, init_loc, D - init_loc, D - init_loc;

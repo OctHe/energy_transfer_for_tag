@@ -7,18 +7,18 @@ clear;
 close all;
 
 %% Params
-Ntxs = 4;
-Ntags = 1;
+Ntx = 4;
+Ntag = 1;
 
 Rp = 3;    % The resolution of phase space for each power source
 
 %% Channel model
-Hf = rand(Ntags, Ntxs) .* exp(2j * pi * rand(Ntags, Ntxs));
-Hb = rand(1, Ntags) .* exp(2j * pi * rand(1, Ntags));
+Hf = rand(Ntag, Ntx) .* exp(2j * pi * rand(Ntag, Ntx));
+Hb = rand(1, Ntag) .* exp(2j * pi * rand(1, Ntag));
 
 % The ground truth channel at the receiver
-truth_channel = zeros(Ntags, Ntxs);
-for Ntag_index = 1: Ntags
+truth_channel = zeros(Ntag, Ntx);
+for Ntag_index = 1: Ntag
     truth_channel(Ntag_index, :) = Hb(Ntag_index) * Hf(Ntag_index, :);
     % The phase of the reference antenna does not affect the beamforming
     % performance.
@@ -27,27 +27,27 @@ for Ntag_index = 1: Ntags
 end
 
 %% Transmission model
-weight_mat = generator_phase_mat(Ntxs, Rp);
-pre_tx = kron(ones(1, Ntags), weight_mat);
-pre_tag = kron(eye(Ntags), ones(1, Rp^(Ntxs-1)));
+weight_mat = generator_phase_mat(Ntx, Rp);
+pre_tx = kron(ones(1, Ntag), weight_mat);
+pre_tag = kron(eye(Ntag), ones(1, Rp^(Ntx-1)));
 
 Z = Hf * pre_tx;
 Y = Hb * (pre_tag .* Z);
-Y = reshape(Y, [], Ntags).';
+Y = reshape(Y, [], Ntag).';
 
 %% Channel estimation with MMSE
 Nloop = 1e7;
 
 rx_rssi = abs(Y).^2;
-est_channel = zeros(Ntags, Ntxs);
-for Ntag_index = 1: Ntags
+est_channel = zeros(Ntag, Ntx);
+for Ntag_index = 1: Ntag
     [est_channel(Ntag_index, :), ~] = ...
-        codebook_ce_mmse(rx_rssi(Ntag_index, :), weight_mat, Ntxs, Nloop);
+        codebook_ce_mmse(rx_rssi(Ntag_index, :), weight_mat, Ntx, Nloop);
     
 end
 
 %% Evaluation
-for Ntag_index = 1: Ntags 
+for Ntag_index = 1: Ntag 
     truth_channel_buf = truth_channel(Ntag_index, :);
     est_channel_buf = est_channel(Ntag_index, :);
     

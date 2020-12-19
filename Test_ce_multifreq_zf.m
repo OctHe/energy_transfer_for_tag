@@ -1,6 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Test of channel estimation in the multi-freq design with zero-forcing
+% Test of channel estimation in the multi-freq design with zero-forcing.
+% The phase caused by multi-freq signal is ignored.
 % Symbol length: 10 uS (bandwidth 100 KHz); Sample rate: 20 MHz
 % Ntxs: 2~4; Ntags: 1~4
 % 
@@ -9,27 +10,34 @@ clear;
 close all;
 
 %% Params
-Ntxs = 4;
-Ntags = 8;
+InitLoc = -0.1;
+D = 4;
 
-sym_len = 1 / 100e3;        % 100 KHz
+Ntx = 4;
+Ntag = 8;
+
+fc = 900e6;            % Band, 900 MHz
+
+fi_txs = 100e3;                  % freq interval between txs, 100 KHz
+fc_txs = fi_txs * (0: (Ntx-1)).';   
+fi_tags = fi_txs * Ntx;          % freq interval between tags 
+fc_tags = fi_tags * (0: (Ntag-1)).';
+
+sym_len = 1 / fi_txs;
 samp_len = 1 / 20e6;        % 20 MHz
 Ns = sym_len / samp_len;    % Number of samples (Number of carriers)
 
-fi_txs = 100e3;                  % freq interval between txs
-fc_txs = fi_txs * (0: (Ntxs-1)).';   
-fi_tags = fi_txs * Ntxs;          % freq interval between tags 
-fc_tags = fi_tags * (0: (Ntags-1)).';
-
 %% Channel model
-Hf = rand(Ntags, Ntxs) .* exp(2j * pi * rand(Ntags, Ntxs));
-Hb = rand(1, Ntags) .* exp(2j * pi * rand(1, Ntags));
-% Hf = ones(Ntags, Ntxs);
-% Hb = ones(1, Ntags);
+loc_tx = device_deployment(InitLoc, D, Ntx, "rectangle");
+loc_tag = rand(2, Ntag) * D;
+loc_rx = [1.1 * D; 1.1 * D];
+
+Hf = channel_model(loc_tx, loc_tag, fc);
+Hb = channel_model(loc_tag, loc_rx, fc);
 
 % The ground truth channel at the receiver
-truth_channel = zeros(Ntags, Ntxs);
-for Ntag_index = 1: Ntags
+truth_channel = zeros(Ntag, Ntx);
+for Ntag_index = 1: Ntag
     truth_channel(Ntag_index, :) = Hb(Ntag_index) * Hf(Ntag_index, :);
     % The phase of the reference antenna does not affect the beamforming
     % performance.
@@ -47,10 +55,10 @@ Y = Hb * (freq_shift_tag .* Z);
 
 %% Channel estimation
 rx_freq = fft(Y);  
-rx_freq = rx_freq(1: Ntxs*Ntags);
+rx_freq = rx_freq(1: Ntx*Ntag);
 est_channel = rx_freq / Ns;
-est_channel = reshape(est_channel, Ntxs, Ntags).';
-for Ntag_index = 1: Ntags
+est_channel = reshape(est_channel, Ntx, Ntag).';
+for Ntag_index = 1: Ntag
     % The phase of the reference antenna does not affect the beamforming
     % performance.
     est_channel(Ntag_index, :) = est_channel(Ntag_index, :) / ...

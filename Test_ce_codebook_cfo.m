@@ -9,7 +9,7 @@ clear;
 close all;
 
 %% Params
-Ntxs = 4;
+Ntx = 4;
 Rp = 3;             % The resolution of phase space for each power source
 samp_rate = 2e6;    % 20 MHz
 fo = 1e3;           % 1 KHz
@@ -17,7 +17,7 @@ fo = 1e3;           % 1 KHz
 Nloop = 1e5;
 
 %% Channel model
-Hf = rand(1, Ntxs) .* exp(2j * pi * rand(1, Ntxs));
+Hf = rand(1, Ntx) .* exp(2j * pi * rand(1, Ntx));
 Hb = rand(1, 1) .* exp(2j * pi * rand(1, 1));
 
 % The ground truth channel at the receiver
@@ -28,7 +28,7 @@ truth_channel = truth_channel / truth_channel(1) * abs(truth_channel(1));
 
 %% Transmission model
 Ns = 35;
-weight_mat = generator_phase_mat(Ntxs, Rp);
+weight_mat = generator_phase_mat(Ntx, Rp);
 sym_len = size(weight_mat, 2) * Ns;
 
 pre_tx = kron(weight_mat, ones(1, Ns));
@@ -42,7 +42,7 @@ rx_rssi = abs(Y).^2;
 rx_rssi = reshape(rx_rssi, Ns, []);
 rx_rssi = mean(rx_rssi, 1);
 
-[estimated_channel_power, ~] = codebook_ce_mmse(rx_rssi, weight_mat, Ntxs, Nloop);
+[estimated_channel_power, ~] = codebook_ce_mmse(rx_rssi, weight_mat, Ntx, Nloop);
 
 %% Channel estimation with IQ using ZF
 estimated_channel_IQ = Y / pre_tx;
