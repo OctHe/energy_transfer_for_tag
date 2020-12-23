@@ -13,19 +13,21 @@ close all;
 InitLoc = -0.1;
 D = 4;
 
-Ntx = 4;
-Ntag = 8;
+Ntx = 8;
+Ntag = 4;
 
-fc = 900e6;            % Band, 900 MHz
+fc = 915e6;            % Band, 900 MHz
 
-fi_txs = 100e3;                  % freq interval between txs, 100 KHz
-fc_txs = fi_txs * (0: (Ntx-1)).';   
-fi_tags = fi_txs * Ntx;          % freq interval between tags 
-fc_tags = fi_tags * (0: (Ntag-1)).';
+fi_tx = 100e3;                  % freq interval between txs, 100 KHz
+fc_tx = fi_tx * (0: (Ntx-1)).';   
+fi_tag = fi_tx * Ntx;          % freq interval between tags
+fc_tag = fi_tag * (0: (Ntag-1)).';
 
-sym_len = 1 / fi_txs;
-samp_len = 1 / 20e6;        % 20 MHz
-Ns = sym_len / samp_len;    % Number of samples (Number of carriers)
+% symbol length and sample rate
+sym_len = 1 / fi_tx;
+bw = 16e6;               % Total bandwidth (sample rate) 16 MHz
+samp_len = 1 / bw;       % The maximal sample rate: 20 MHz
+Ns = sym_len * bw;       % Number of samples
 
 %% Channel model
 loc_tx = device_deployment(InitLoc, D, Ntx, "rectangle");
@@ -36,19 +38,20 @@ Hf = channel_model(loc_tx, loc_tag, fc);
 Hb = channel_model(loc_tag, loc_rx, fc);
 
 % The ground truth channel at the receiver
-truth_channel = zeros(Ntag, Ntx);
+norm_ch = zeros(Ntag, Ntx);
+truth_ch = zeros(Ntag, Ntx);
 for Ntag_index = 1: Ntag
-    truth_channel(Ntag_index, :) = Hb(Ntag_index) * Hf(Ntag_index, :);
+    truth_ch(Ntag_index, :) = Hb(Ntag_index) * Hf(Ntag_index, :);
     % The phase of the reference antenna does not affect the beamforming
     % performance.
-    truth_channel(Ntag_index, :) = truth_channel(Ntag_index, :) / ...
-        truth_channel(Ntag_index, 1) * abs(truth_channel(Ntag_index, 1));
+    norm_ch(Ntag_index, :) = truth_ch(Ntag_index, :) / ...
+        truth_ch(Ntag_index, 1) * abs(truth_ch(Ntag_index, 1));
 end
 
 %% Transmission model
-multifreq_tx = exp(2j * pi * fc_txs * (0: (Ns-1)) * samp_len);
+multifreq_tx = exp(2j * pi * fc_tx * (0: (Ns-1)) * samp_len);
 % Each tag shifts the freq
-freq_shift_tag = exp(2j * pi * fc_tags * (0: (Ns-1)) * samp_len);
+freq_shift_tag = exp(2j * pi * fc_tag * (0: (Ns-1)) * samp_len);
 
 Z = Hf * multifreq_tx;
 Y = Hb * (freq_shift_tag .* Z);
@@ -65,5 +68,6 @@ for Ntag_index = 1: Ntag
         est_channel(Ntag_index, 1) * abs(est_channel(Ntag_index, 1));
 end
 
-
-
+%% Figure;
+figure;
+plot(abs(Y));

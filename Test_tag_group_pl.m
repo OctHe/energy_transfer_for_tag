@@ -9,12 +9,12 @@ close all;
 
 %% Parameter
 InitLoc = -0.1;
-D = 30;
+D = 20;
 
 fc = 900e6;            % Band, 900 MHz
 
 Ntx = 4;
-Ntag = 4;
+Ntag = 10;
 Ptx = 1e2;          % 20 dBm
 
 Nloop = 1e3;
@@ -43,4 +43,6 @@ end
 Nloop = 1e3;
 Pthre = -15;   % -15 dBm
 
-group_mat = tag_group_power(Hf, Pthre, Ptx, Nloop)
+group_mat = tag_group_power(Hf, Pthre, Ptx, Nloop);
+Ng = size(group_mat, 1)
+Nt_g = Ntag / Ng

@@ -11,14 +11,14 @@ InitLoc = -1;
 D = 12;
 fc = 9e8;            % Band, 900 MHz
 
-Ntxs = 12;
-Nrxs = 20;
+Ntxs = 8;
+Nrxs = 250;
 
 %% channel model
 % distributed
 loc_txs_distributed = device_deployment(InitLoc, D, Ntxs, "rectangle");
-loc_rxs = [D / 2 * ones(1, Nrxs); (1/Nrxs: 1/Nrxs: 1) * D];
-loc_target = [D / 4; D / 8];
+loc_rxs = [(1/Nrxs: 1/Nrxs: 1) * D; D / 2 * ones(1, Nrxs)];
+loc_target = [D / 2; D / 2];
 
 ch_target = channel_model(loc_txs_distributed, loc_target, fc);
 ch_rxs = channel_model(loc_txs_distributed, loc_rxs, fc);

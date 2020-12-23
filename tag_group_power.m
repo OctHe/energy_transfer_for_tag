@@ -46,7 +46,6 @@ while sum(group_indicator)
     ch_cos = abs(Hg * Hg') ./ (ch_abs * ch_abs');
     dist_mat = 1 - ch_cos;
     for Ntag_index = 1: Ntag
-
         nan_index = find(isnan(dist_mat(Ntag_index, :)));
         dist_mat(Ntag_index, nan_index) = zeros(1, length(nan_index));
         dist_mat(Ntag_index, Ntag_index) = 0;
