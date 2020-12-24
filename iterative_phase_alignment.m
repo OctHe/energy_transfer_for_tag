@@ -26,4 +26,4 @@ for ite_index = 1: Nloop
         phase_now = phase_max;
     end
 end
-bf_weight = 1 / sqrt(Ntx) * exp(1j * phase_now);
+bf_weight = exp(1j * phase_now);

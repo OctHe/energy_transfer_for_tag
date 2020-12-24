@@ -15,7 +15,7 @@ fc = 900e6;         % Band, 900 MHz
 
 Ntx = 2;
 Ntag = 2;
-Ptx = 1e2;          % 20 dBm
+Amp_tx = 1e1;          % 20 dBm
 
 Nloop = 1e3;
 
@@ -50,7 +50,7 @@ bf_weight_truth = iterative_phase_alignment(Hf, Ntx, Nloop);
 % bf_power_rx_truth = abs(truth_channel * bf_weight_truth * Ptx).^2;
 % bf_power_rx_truth = 10 * log10(bf_power_rx_truth.')
 
-bf_power_tag_truth = abs(Hf * bf_weight_truth * Ptx).^2;
+bf_power_tag_truth = abs(Hf * bf_weight_truth * Amp_tx).^2;
 bf_power_tag_truth = 10 * log10(bf_power_tag_truth.')
 
 

@@ -16,7 +16,7 @@ D = 4;
 Ntx = 8;
 Ntag = 1;
 
-Ptx = 10e2;             % 20 dBm
+amp_tx = 1e1;             % 20 dBm
 
 % frequency and band
 fc = 915e6;             % Band, 900 MHz
@@ -48,7 +48,7 @@ multifreq_tx = exp(2j * pi * fc_tx * t * samp_len);
 % Each tag shifts the freq
 freq_shift_tag = exp(2j * pi * fc_tag * t * samp_len);
 
-Z = Hf * multifreq_tx * Ptx;
+Z = Hf * multifreq_tx * amp_tx;
 Y = Hb * (freq_shift_tag .* Z);
 
 Y = repmat(Y, 1, Nre);

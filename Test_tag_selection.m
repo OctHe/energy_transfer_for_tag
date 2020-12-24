@@ -15,7 +15,8 @@ fc = 900e6;            % Band, 900 MHz
 
 Ntx = 4;
 Ntag = 10;
-Ptx = 1e2;          % 20 dBm
+
+amp_tx = 1e1;          % 20 dBm
 
 Nloop = 1e3;
 
@@ -50,7 +51,7 @@ H_sel = Hf_est(sel_tag, :);
 H_unsel = Hf_est(unsel_tag, :);
 
 bf_weight = iterative_phase_alignment(H_sel, Ntx, Nloop);
-bf_power = 10 * log10(abs(H_sel * bf_weight * Ptx).^2);
+bf_power = 10 * log10(abs(H_sel * bf_weight * amp_tx).^2);
 
 % Tag selection
 while min(bf_power) > Pth && length(sel_tag) < Ntag
@@ -79,7 +80,7 @@ while min(bf_power) > Pth && length(sel_tag) < Ntag
 
     % update bf power
     bf_weight = iterative_phase_alignment(H_sel, Ntx, Nloop);
-    bf_power = 10 * log10(abs(H_sel * bf_weight * Ptx).^2);
+    bf_power = 10 * log10(abs(H_sel * bf_weight * amp_tx).^2);
 end
 
 % The last tag is not selected in this case
@@ -91,7 +92,7 @@ sel_tag = sort(sel_tag);
 % Proposal: Phase alignment for selected tags
 H_sel = Hf_est(sel_tag, :);
 bf_weight_sel = iterative_phase_alignment(H_sel, Ntx, Nloop);
-bf_power_sel = abs(H_sel * bf_weight_sel * Ptx).^2;
+bf_power_sel = abs(H_sel * bf_weight_sel * amp_tx).^2;
 
 %% Baseline
 % Baseline: Phase alignment for randam tags
@@ -101,11 +102,11 @@ sel_tag_rand = sort([core_tag, unsel_tag_list(sel_tag_rand_index)]);
 
 H_rand = Hf_est(sel_tag_rand, :);
 bf_weight_rand = iterative_phase_alignment(H_rand, Ntx, Nloop);
-bf_power_rand = abs(H_rand * bf_weight_rand * Ptx).^2;
+bf_power_rand = abs(H_rand * bf_weight_rand * amp_tx).^2;
 
 % Baseline: Phase alignment for all tags
 bf_weight_all = iterative_phase_alignment(Hf_est, Ntx, Nloop);
-bf_power_all = abs(Hf * bf_weight_all * Ptx).^2;
+bf_power_all = abs(Hf * bf_weight_all * amp_tx).^2;
 
 gain_sel_rand = min(bf_power_sel) / min(bf_power_rand)
 gain_sel_all = min(bf_power_sel) / min(bf_power_all)

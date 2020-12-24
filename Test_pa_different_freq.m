@@ -34,7 +34,7 @@ Nt = bw / fi_tx;        % Number of tones
 
 Nloop = 1e3;
 
-Ptx = 1e2;
+amp_tx = 1e1;              % The amplitude of 20 dBm
 
 %% Channel model
 loc_tx = device_deployment(InitLoc, D, Ntx, "rectangle");
@@ -63,7 +63,7 @@ for Nt_index = 1: Nt
 
     % phase alignment
     bf_weight = iterative_phase_alignment(Hf, Ntx, Nloop);
-    bf_power = abs(Hf * bf_weight * Ptx).^2;
+    bf_power = abs(Hf * bf_weight * amp_tx).^2;
     bf_power = 10 * log10(bf_power);
     
     bf_power_freq(Nt_index, :) = bf_power;
