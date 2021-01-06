@@ -3,6 +3,10 @@
 *.asv
 *~
 
+gr-beamnet/build/
+# Data files
+*.bin
+
 # Compiled Object files
 *.slo
 *.lo
