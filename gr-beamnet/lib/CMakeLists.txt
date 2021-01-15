@@ -26,7 +26,9 @@ include(GrPlatform) #define LIB_SUFFIX
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND beamnet_sources
-    correlation_detector_impl.cc )
+    correlation_detector_impl.cc
+    time_and_freq_offset_estimation_impl.cc
+    signal_generator_impl.cc )
 
 set(beamnet_sources "${beamnet_sources}" PARENT_SCOPE)
 if(NOT beamnet_sources)
@@ -59,6 +61,8 @@ include_directories(${CPPUNIT_INCLUDE_DIRS})
 list(APPEND test_beamnet_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/test_beamnet.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_beamnet.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_signal_generator.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_time_and_freq_offset_estimation.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_correlation_detector.cc
     )
 

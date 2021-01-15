@@ -32,6 +32,7 @@ endif()
 GR_PYTHON_INSTALL(
     FILES
     __init__.py
+    beamnet_ce.py
     DESTINATION ${GR_PYTHON_DIR}/beamnet
 )
 
@@ -43,3 +44,6 @@ include(GrTest)
 set(GR_TEST_TARGET_DEPS gnuradio-beamnet)
 set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
 GR_ADD_TEST(qa_correlation_detector ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_correlation_detector.py)
+GR_ADD_TEST(qa_beamnet_ce ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_beamnet_ce.py)
+GR_ADD_TEST(qa_time_and_freq_offset_estimation ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_time_and_freq_offset_estimation.py)
+GR_ADD_TEST(qa_signal_generator ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_signal_generator.py)

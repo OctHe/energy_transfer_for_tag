@@ -31,4 +31,6 @@ except ImportError:
 	pass
 
 # import any pure python here
+from beamnet_ce import beamnet_ce
+
 #

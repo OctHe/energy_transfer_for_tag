@@ -3,7 +3,7 @@
 % Phase matrix generation
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function Weight = generator_phase_mat(Ntxs, Rp)
+function Weight = phase_mat_generation(Ntxs, Rp)
 
 Weight = ones(Ntxs, Rp^(Ntxs -1));
 ConvertVector = zeros(Ntxs, 1);

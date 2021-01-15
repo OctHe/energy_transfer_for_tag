@@ -23,5 +23,7 @@
 ########################################################################
 install(FILES
     api.h
-    correlation_detector.h DESTINATION include/beamnet
+    correlation_detector.h
+    time_and_freq_offset_estimation.h
+    signal_generator.h DESTINATION include/beamnet
 )

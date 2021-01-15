@@ -2,8 +2,11 @@
 *.d
 *.asv
 *~
+.*
 
-gr-beamnet/build/
+gr-beamnet/build
+gr-beamnet/tags
+
 # Data files
 *.bin
 

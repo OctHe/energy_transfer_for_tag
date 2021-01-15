@@ -29,6 +29,8 @@
 #include "qa_beamnet.h"
 
 #include "qa_correlation_detector.h"
+#include "qa_time_and_freq_offset_estimation.h"
+#include "qa_signal_generator.h"
 
 CppUnit::TestSuite *
 qa_beamnet::suite()
@@ -36,6 +38,8 @@ qa_beamnet::suite()
   CppUnit::TestSuite *s = new CppUnit::TestSuite("beamnet");
 
   s->addTest(gr::beamnet::qa_correlation_detector::suite());
+  s->addTest(gr::beamnet::qa_time_and_freq_offset_estimation::suite());
+  s->addTest(gr::beamnet::qa_signal_generator::suite());
 
   return s;
 }

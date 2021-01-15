@@ -107,10 +107,6 @@ namespace gr {
           // sent the target when detect the energy
           if(d_detect && !d_sent && (out[i] > d_threshold) && (std::fabs(out[i+1] - out[i]) <= d_deviation))
           {
-              if(d_debug_num == 0)
-                  break;
-              else
-                  d_debug_num --;
 
               pmt::pmt_t target_msg = pmt::make_vector(d_length, pmt::from_complex(gr_complex(0, 0))); 
               for(int j = 0; j < d_length; j++)
