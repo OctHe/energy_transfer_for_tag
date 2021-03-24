@@ -437,7 +437,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 620)</value>
+      <value>(640, 532)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -465,7 +465,109 @@
     </param>
   </block>
   <block>
-    <key>beamnet_time_and_freq_offset_estimation</key>
+    <key>beamnet_signal_generator</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>fft_size</key>
+      <value>fft_size</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(656, 388)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>beamnet_signal_generator_0_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>tx_index</key>
+      <value>2</value>
+    </param>
+  </block>
+  <block>
+    <key>beamnet_signal_generator</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>fft_size</key>
+      <value>fft_size</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(648, 260)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>beamnet_signal_generator_0_0_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>tx_index</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>beamnet_time_offset_estimation</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -488,7 +590,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(760, 772)</value>
+      <value>(800, 732)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -496,7 +598,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>beamnet_time_and_freq_offset_estimation_0</value>
+      <value>beamnet_time_offset_estimation_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -512,11 +614,11 @@
     </param>
     <param>
       <key>tx</key>
-      <value>Ntx</value>
+      <value>4</value>
     </param>
     <param>
       <key>update_rate</key>
-      <value>10e6</value>
+      <value>samp_rate</value>
     </param>
   </block>
   <block>
@@ -547,7 +649,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(568, 884)</value>
+      <value>(528, 900)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -568,6 +670,37 @@
     <param>
       <key>vlen</key>
       <value>fft_size</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_message_debug</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1120, 764)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_message_debug_0</value>
     </param>
   </block>
   <block>
@@ -594,7 +727,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(856, 172)</value>
+      <value>(864, 156)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -645,7 +778,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(872, 316)</value>
+      <value>(864, 332)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -696,7 +829,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(896, 668)</value>
+      <value>(856, 652)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -747,7 +880,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(856, 508)</value>
+      <value>(864, 492)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -892,7 +1025,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(632, 316)</value>
+      <value>(840, 228)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -943,7 +1076,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(824, 564)</value>
+      <value>(832, 564)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1045,7 +1178,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 156)</value>
+      <value>(648, 140)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1096,7 +1229,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(848, 428)</value>
+      <value>(856, 412)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1522,7 +1655,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(384, 104)</value>
+      <value>(392, 96)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1585,7 +1718,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(384, 272)</value>
+      <value>(392, 256)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1648,7 +1781,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(368, 584)</value>
+      <value>(392, 568)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1711,7 +1844,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(520, 768)</value>
+      <value>(520, 704)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1774,7 +1907,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(384, 432)</value>
+      <value>(392, 416)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2481,7 +2614,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1048, 116)</value>
+      <value>(1056, 56)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2497,7 +2630,7 @@
     </param>
     <param>
       <key>clock_source0</key>
-      <value></value>
+      <value>external</value>
     </param>
     <param>
       <key>sd_spec0</key>
@@ -2505,7 +2638,7 @@
     </param>
     <param>
       <key>time_source0</key>
-      <value></value>
+      <value>external</value>
     </param>
     <param>
       <key>clock_source1</key>
@@ -3292,7 +3425,7 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>"serial=3102765"</value>
+      <value>"serial=30FDE1D"</value>
     </param>
     <param>
       <key>dev_args</key>
@@ -3304,7 +3437,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1048, 412)</value>
+      <value>(1056, 400)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3320,7 +3453,7 @@
     </param>
     <param>
       <key>clock_source0</key>
-      <value></value>
+      <value>external</value>
     </param>
     <param>
       <key>sd_spec0</key>
@@ -3328,7 +3461,7 @@
     </param>
     <param>
       <key>time_source0</key>
-      <value></value>
+      <value>external</value>
     </param>
     <param>
       <key>clock_source1</key>
@@ -4655,7 +4788,7 @@
     </param>
     <param>
       <key>clock_source0</key>
-      <value></value>
+      <value>external</value>
     </param>
     <param>
       <key>sd_spec0</key>
@@ -4663,7 +4796,7 @@
     </param>
     <param>
       <key>time_source0</key>
-      <value></value>
+      <value>external</value>
     </param>
     <param>
       <key>clock_source1</key>
@@ -4814,7 +4947,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(176, 116)</value>
+      <value>(192, 108)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4873,7 +5006,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(176, 284)</value>
+      <value>(184, 268)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4932,7 +5065,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(160, 596)</value>
+      <value>(168, 580)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4991,7 +5124,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(176, 444)</value>
+      <value>(184, 428)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -5030,65 +5163,6 @@
       <value>slave_signal_2</value>
     </param>
   </block>
-  <block>
-    <key>blocks_vector_source_x</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(0, 484)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>vector_source_tx_2</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>repeat</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>tags</key>
-      <value>[]</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>fft_size</value>
-    </param>
-    <param>
-      <key>vector</key>
-      <value>(1, ) * fft_size</value>
-    </param>
-  </block>
   <connection>
     <source_block_id>beamnet_signal_generator_0</source_block_id>
     <sink_block_id>blocks_vector_to_stream_0_0_0_0_0</sink_block_id>
@@ -5096,10 +5170,22 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>beamnet_time_and_freq_offset_estimation_0</source_block_id>
-    <sink_block_id>beamnet_signal_generator_0</sink_block_id>
-    <source_key>freq_sync</source_key>
-    <sink_key>freq_cal</sink_key>
+    <source_block_id>beamnet_signal_generator_0_0</source_block_id>
+    <sink_block_id>blocks_vector_to_stream_0_0_0_1</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>beamnet_signal_generator_0_0_0</source_block_id>
+    <sink_block_id>blocks_vector_to_stream_0_0_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>beamnet_time_offset_estimation_0</source_block_id>
+    <sink_block_id>blocks_message_debug_0</sink_block_id>
+    <source_key>time_sync</source_key>
+    <sink_key>print</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
@@ -5169,7 +5255,7 @@
   </connection>
   <connection>
     <source_block_id>reverse_fft_vxx_1_0</source_block_id>
-    <sink_block_id>blocks_vector_to_stream_0_0_0_0</sink_block_id>
+    <sink_block_id>beamnet_signal_generator_0_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -5181,7 +5267,7 @@
   </connection>
   <connection>
     <source_block_id>reverse_fft_vxx_1_0_0_0</source_block_id>
-    <sink_block_id>beamnet_time_and_freq_offset_estimation_0</sink_block_id>
+    <sink_block_id>beamnet_time_offset_estimation_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -5199,7 +5285,7 @@
   </connection>
   <connection>
     <source_block_id>reverse_fft_vxx_1_1</source_block_id>
-    <sink_block_id>blocks_vector_to_stream_0_0_0_1</sink_block_id>
+    <sink_block_id>beamnet_signal_generator_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -5238,11 +5324,5 @@
     <sink_block_id>reverse_fft_vxx_1_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>vector_source_tx_2</source_block_id>
-    <sink_block_id>beamnet_signal_generator_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>1</sink_key>
   </connection>
 </flow_graph>

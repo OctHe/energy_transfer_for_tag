@@ -24,6 +24,12 @@
 install(FILES
     api.h
     correlation_detector.h
-    time_and_freq_offset_estimation.h
-    signal_generator.h DESTINATION include/beamnet
+    time_offset_estimation.h
+    tx_master.h
+    energy_detector.h
+    symbol_sync.h
+    packet_extraction.h
+    packet_trigger.h
+    tx_slave.h
+    tx_slave_mux.h DESTINATION include/beamnet
 )
