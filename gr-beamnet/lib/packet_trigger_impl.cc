@@ -49,13 +49,12 @@ namespace gr {
               gr::io_signature::make(2, 2, sizeof(float)),
               gr::io_signature::make(1, 1, sizeof(char))),
         d_fft_size(fft_size),
-        d_pkt_size(pkt_size),
         d_thr(thr),
         d_state(STATE_NOISE),
         d_find_trig(false),
         d_detect_offset(0),
         d_pkt_offset(0),
-        d_pkt_len(fft_size * pkt_size)
+        d_pkt_size(pkt_size)
     {}
 
     /*
@@ -69,8 +68,30 @@ namespace gr {
     packet_trigger_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
-        for (unsigned i = 0; i < ninput_items_required.size(); i++) 
-            ninput_items_required[i] = noutput_items + d_pkt_len;
+        switch(d_state)
+        {
+            case STATE_NOISE:
+                for (unsigned i = 0; i < ninput_items_required.size(); i++) 
+                    ninput_items_required[i] = noutput_items + d_pkt_size;
+                break;
+
+            case STATE_DETECTED:
+                for (unsigned i = 0; i < ninput_items_required.size(); i++) 
+                    ninput_items_required[i] = noutput_items;
+
+                break;
+
+            case STATE_PKT:
+                for (unsigned i = 0; i < ninput_items_required.size(); i++) 
+                    ninput_items_required[i] = noutput_items;
+
+                break;
+
+            default:
+
+                throw std::runtime_error("invalid state");
+                break;
+        }
     }
 
     int
@@ -86,67 +107,95 @@ namespace gr {
       char *out = (char *) output_items[0];
 
       size_t block_size = output_signature()->sizeof_stream_item (0);
-      memset(out, 0, block_size * noutput_items);
-      // If detect the packet start, output 1
-      for(unsigned i = 0; i < noutput_items;)
+      
+      switch(d_state)
       {
-          switch(d_state)
-          {
-              case STATE_NOISE:
+          case STATE_NOISE:
+            
+              unsigned i;
+              for(i = 0; i < noutput_items; i++)
+              {
+                  if( in_ed[i] >= d_thr)
+                  {
+                    d_detect_offset = 0;
+                    for(unsigned j = 1; j < d_pkt_size; j++)
+                        d_detect_offset = (in_ss[i + j] > in_ss[i + d_detect_offset]) ? j : d_detect_offset;
 
-                    if(in_ed[i] > d_thr)
-                        d_state = STATE_DETECTED;
-                    else
-                        i ++;
-
+                    d_state = STATE_DETECTED;
                     break;
-                  
-              case STATE_DETECTED:
+                  }
+                  else
+                    out[i] = 1;
+              }
 
-                    // If the trigger is detected, change to the trigger
-                    if(d_find_trig)
-                    {
-                        i = d_detect_offset;
-                        out[i] = 1;
+              consume_each (i);
+              return i;
 
-                        d_find_trig = false;
-                        d_state = STATE_PKT;
-                    }
+              break;
 
-                    // Find the start of it in the following (d_pkt_len) samples
-                    for(unsigned j = 1; j < d_pkt_len; j++)
-                        i = (in_ss[i + j] > in_ss[i]) ? (i + j) : i;
+          case STATE_DETECTED:
 
-                    // If the trigger is in the next stream
-                    if(i >= noutput_items)
-                    {
-                        d_find_trig = true;
-                        d_detect_offset = i - noutput_items;
-                    }
-                    else
-                    {
-                        out[i] = 1;
-                        
-                        d_state = STATE_PKT;
-                    }
-                    break;
+              memset(out, 1, block_size * noutput_items);
+              
+              if(d_detect_offset > noutput_items)
+              {
+                d_detect_offset -= noutput_items;
 
-              case STATE_PKT:
+                consume_each (noutput_items);
+                return noutput_items;
+              }
+              else
+              {
+                  unsigned i = d_detect_offset;
+                  d_detect_offset = 0;
+                  d_pkt_offset = d_pkt_size;
 
-                    i ++;
-                    d_pkt_offset ++;
-                    if(d_pkt_offset >= (d_pkt_len -1))
-                    {
-                        d_pkt_offset = 0;
-                        d_state = STATE_NOISE;
-                    }
-                    break;
+                  d_state = STATE_PKT;
 
-              default:
-                    throw std::runtime_error("invalid state");
-                    break;
-          }
+                  consume_each (i);
+                  return i;
+              }
+             
+              break;
+
+          case STATE_PKT:
+
+              memset(out, 1, block_size * noutput_items);
+              if(d_pkt_offset == d_pkt_size)
+              {
+                  out[0] = 2; 
+                  std::cout<< (int)out[0] <<'a';
+              }
+              d_pkt_offset = 0;
+
+              consume_each (noutput_items);
+              return noutput_items;
+              
+              // if(d_pkt_offset > noutput_items)
+              // {
+              //     d_pkt_offset -= noutput_items;
+              //
+              //     consume_each (noutput_items);
+              //     return noutput_items;
+              // }
+              // else
+              // {
+              //     unsigned i = d_pkt_offset;
+              //     d_pkt_offset = 0;
+              //
+              //     d_state = STATE_NOISE;
+              //
+              //     consume_each (i);
+              //     return i;
+              // }
+
+              break;
+
+          default:
+              throw std::runtime_error("invalid state");
+              break;
       }
+
       // Tell runtime system how many input items we consumed on
       // each input stream.
       consume_each (noutput_items);

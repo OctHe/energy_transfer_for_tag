@@ -4,12 +4,17 @@
   <key>beamnet_packet_extraction</key>
   <category>[beamnet]</category>
   <import>import beamnet</import>
-  <make>beamnet.packet_extraction($fft_size, $pkt_size, $thr)</make>
+  <make>beamnet.packet_extraction($samp_rate, $fft_size, $pkt_size, $thr)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
+  <param>
+    <name>Sample Rate</name>
+    <key>samp_rate</key>
+    <type>float</type>
+  </param>
   <param>
     <name>FFT Size</name>
     <key>fft_size</key>
@@ -52,6 +57,6 @@
   <source>
     <name>out</name>
     <type>complex</type>
-    <vlen>(fft_size*pkt_size)</vlen>
+    <optional>1</optional>
   </source>
 </block>

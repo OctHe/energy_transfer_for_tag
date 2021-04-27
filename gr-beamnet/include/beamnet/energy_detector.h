@@ -46,7 +46,7 @@ namespace gr {
        * class. beamnet::energy_detector::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int pkt_len);
+      static sptr make(int pkt_size);
     };
 
   } // namespace beamnet

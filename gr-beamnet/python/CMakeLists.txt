@@ -32,8 +32,8 @@ endif()
 GR_PYTHON_INSTALL(
     FILES
     __init__.py
-    beamnet_ce.py
-    DESTINATION ${GR_PYTHON_DIR}/beamnet
+    channel_estimation.py
+    phase_alignment.py DESTINATION ${GR_PYTHON_DIR}/beamnet
 )
 
 ########################################################################
@@ -44,12 +44,12 @@ include(GrTest)
 set(GR_TEST_TARGET_DEPS gnuradio-beamnet)
 set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
 GR_ADD_TEST(qa_correlation_detector ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_correlation_detector.py)
-GR_ADD_TEST(qa_beamnet_ce ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_beamnet_ce.py)
-GR_ADD_TEST(qa_time_offset_estimation ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_time_offset_estimation.py)
-GR_ADD_TEST(qa_tx_master ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_tx_master.py)
+GR_ADD_TEST(qa_channel_estimation ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_channel_estimation.py)
 GR_ADD_TEST(qa_energy_detector ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_energy_detector.py)
 GR_ADD_TEST(qa_symbol_sync ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_symbol_sync.py)
 GR_ADD_TEST(qa_packet_extraction ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_packet_extraction.py)
 GR_ADD_TEST(qa_packet_trigger ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_packet_trigger.py)
-GR_ADD_TEST(qa_tx_slave ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_tx_slave.py)
+GR_ADD_TEST(qa_source_pkt ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_source_pkt.py)
 GR_ADD_TEST(qa_tx_slave_mux ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_tx_slave_mux.py)
+GR_ADD_TEST(qa_packet_demux ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_packet_demux.py)
+GR_ADD_TEST(qa_phase_alignment ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_phase_alignment.py)

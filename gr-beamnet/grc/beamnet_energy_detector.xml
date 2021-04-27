@@ -4,15 +4,15 @@
   <key>beamnet_energy_detector</key>
   <category>[beamnet]</category>
   <import>import beamnet</import>
-  <make>beamnet.energy_detector($pkt_len)</make>
+  <make>beamnet.energy_detector($pkt_size)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
   <param>
-    <name>Packet Length</name>
-    <key>pkt_len</key>
+    <name>Packet Size</name>
+    <key>pkt_size</key>
     <type>int</type>
   </param>
 

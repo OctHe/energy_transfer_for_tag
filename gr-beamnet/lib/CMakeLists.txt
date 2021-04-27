@@ -27,14 +27,13 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND beamnet_sources
     correlation_detector_impl.cc
-    time_offset_estimation_impl.cc
-    tx_master_impl.cc
     energy_detector_impl.cc
     symbol_sync_impl.cc
     packet_extraction_impl.cc
     packet_trigger_impl.cc
-    tx_slave_impl.cc
-    tx_slave_mux_impl.cc )
+    source_pkt_impl.cc
+    tx_slave_mux_impl.cc
+    packet_demux_impl.cc )
 
 set(beamnet_sources "${beamnet_sources}" PARENT_SCOPE)
 if(NOT beamnet_sources)
@@ -67,14 +66,13 @@ include_directories(${CPPUNIT_INCLUDE_DIRS})
 list(APPEND test_beamnet_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/test_beamnet.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_beamnet.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_packet_demux.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_tx_slave_mux.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/qa_tx_slave.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_source_pkt.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_packet_trigger.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_packet_extraction.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_symbol_sync.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_energy_detector.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/qa_tx_master.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/qa_time_offset_estimation.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_correlation_detector.cc
     )
 

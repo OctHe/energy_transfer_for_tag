@@ -48,7 +48,7 @@ namespace gr {
       d_hd_len(hd_len),
       d_tx_state(STATE_RX_SYNC)
     {
-       d_pkt_size = fft_size * (hd_len + hd_len * tx + pd_len);
+       d_pkt_size = fft_size * (hd_len * tx + pd_len);
        d_pkt_offset = 0;
     }
 
@@ -84,7 +84,7 @@ namespace gr {
           {
               case STATE_RX_SYNC:
                   
-                  if(in_trg[i] == 0)
+                  if(in_trg[i] == 1)
                       out[i++] = 0;
                   else
                       d_tx_state = STATE_TX_PKT;
@@ -93,16 +93,16 @@ namespace gr {
 
               case STATE_TX_PKT:
 
-                  if(d_pkt_offset < d_fft_size * d_hd_len)
-                  {
-                      // Slaves do not send sync words
-                      out[i] = 0;
-
-                      d_pkt_offset ++;
-                      i++;
-                  }
-                  else
-                  {
+                  // if(d_pkt_offset < d_fft_size * d_hd_len)
+                  // {
+                  //     // Slaves do not send sync words
+                  //     out[i] = 0;
+                  //
+                  //     d_pkt_offset ++;
+                  //     i++;
+                  // }
+                  // else
+                  // {
                     out[i] = in_pkt[i];
                   
                     d_pkt_offset ++;
@@ -111,9 +111,9 @@ namespace gr {
                     if(d_pkt_offset == d_pkt_size)
                     {
                         d_pkt_offset = 0;
-                        d_tx_state = STATE_RX_SYNC;
+                        // d_tx_state = STATE_RX_SYNC;
                     }
-                  }
+                  // }
 
                   break;
 

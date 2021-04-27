@@ -30,8 +30,7 @@ namespace gr {
     {
      private:
         int d_fft_size;
-        int d_pkt_size; // Packet size in symbol
-        int d_pkt_len;  // Packet size in sample
+        int d_pkt_size;  // Packet size in sample
 
         float d_thr;
 

@@ -50,6 +50,7 @@ namespace gr {
         d_detect = false;
         d_sent = false;
         d_debug_num = 40;
+
         message_port_register_out(pmt::mp("target"));
 
     }

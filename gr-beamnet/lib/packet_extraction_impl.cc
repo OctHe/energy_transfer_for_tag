@@ -24,29 +24,36 @@
 
 #include <gnuradio/io_signature.h>
 #include "packet_extraction_impl.h"
+#include "rx_header.h"
 
 namespace gr {
   namespace beamnet {
 
     packet_extraction::sptr
-    packet_extraction::make(int fft_size, int pkt_size, float thr)
+    packet_extraction::make(float samp_rate, int fft_size, int pkt_size, float thr)
     {
       return gnuradio::get_initial_sptr
-        (new packet_extraction_impl(fft_size, pkt_size, thr));
+        (new packet_extraction_impl(samp_rate, fft_size, pkt_size, thr));
     }
 
     /*
      * The private constructor
      */
-    packet_extraction_impl::packet_extraction_impl(int fft_size, int pkt_size, float thr)
+    packet_extraction_impl::packet_extraction_impl(float samp_rate, int fft_size, int pkt_size, float thr)
       : gr::block("packet_extraction",
               gr::io_signature::make3(3, 3, sizeof(gr_complex), sizeof(float), sizeof(float)),
-              gr::io_signature::make(1, 1, sizeof(gr_complex) * fft_size * pkt_size)),
+              gr::io_signature::make(1, 1, sizeof(gr_complex))),
         d_fft_size(fft_size),
         d_pkt_size(pkt_size),
         d_thr(thr),
-        d_pkt_len(fft_size * pkt_size)
-    {}
+        d_rx_state(STATE_RX_SKIP)
+    {
+
+        d_skip_samp = (int) (samp_rate / 10); // Skip the samples in the following 100 ms
+        d_offset = 0;
+        d_pkt_index = 0;
+        d_peak = 0;
+    }
 
     /*
      * Our virtual destructor.
@@ -59,8 +66,8 @@ namespace gr {
     packet_extraction_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
-        for (unsigned i = 0; i < ninput_items_required.size(); i++) 
-            ninput_items_required[i] = (noutput_items + 2) * d_pkt_len;
+      for (unsigned i = 0; i < ninput_items_required.size(); i++) 
+          ninput_items_required[i] = noutput_items;
     }
 
     int
@@ -77,39 +84,157 @@ namespace gr {
       const float *in_ss = (const float *) input_items[2];
       gr_complex *out = (gr_complex *) output_items[0];
 
-      int extracted_pkt = 0;    // The number of extracted packet in this stream
-      bool pkt_detected = false, sym_sync = false;
-
-      // Extract the packet from the results of energy detection and symbol synchronization
-      unsigned i = 0;
-      while(i < noutput_items * d_pkt_len)
+      switch(d_rx_state)
       {
-          if(in_ed[i] > d_thr)
-          {
-              extracted_pkt ++;
+            case STATE_RX_NULL:
 
-              // If the packet is detected, then find the start of it in the following (d_pkt_len) samples
-              for(unsigned j = 1; j < d_pkt_len; j++)
-                    i = (in_ss[i + j] > in_ss[i]) ? (i + j) : i;
+                // Detect the packet (Coarse time sync)
+                // Output 0 item
+                for(unsigned i = 0; i < noutput_items; i++)
+                {
+                    if(in_ed[i] >= d_thr)
+                    {
+                        d_pkt_index = 0;
+                        d_peak = 0;
+
+                        d_rx_state = STATE_RX_ED;
+
+                        consume_each (i);
+                        return 0;
+                        }
+                    }
+              
+                consume_each (noutput_items);
+                return 0;
 
 
-              // Output the following (d_pkt_len) samples, and continuously find the next packet
-              size_t block_size = output_signature()->sizeof_stream_item (0);
-              memcpy(out + (extracted_pkt -1) * d_pkt_len, in_sig + i, block_size);
-              i += d_pkt_len;
+            case STATE_RX_ED: 
+                
+                // Find the start of the packet (Fine time sync)
+                // Output 0 item
+                for(unsigned i = 0; i < noutput_items; i++)
+                {
+                    if(in_ss[i] > d_peak)
+                    {
+                        d_pkt_index = d_offset;
+                        d_peak = in_ss[i];
+                    }
 
-          }
-          else          
-              i++;
+                    d_offset ++;
 
+                    if(d_offset == (d_pkt_size + d_fft_size))
+                    {
+                        d_offset = 0;
+
+                        d_rx_state = STATE_RX_DETECTED;
+
+                        consume_each (i);
+                        return 0;
+                        
+                    }
+                }
+                
+                consume_each (noutput_items);
+                return 0;
+
+            case STATE_RX_DETECTED:
+
+                for(unsigned i = 0; i < noutput_items; i++)
+                {
+                    d_pkt_index --;
+
+                    if(d_pkt_index == 0)
+                    {
+                        d_rx_state = STATE_RX_PKT;
+
+                        consume_each (i);
+                        return 0;
+                        
+                    }
+                }
+
+                consume_each (noutput_items);
+                return 0;
+
+            case STATE_RX_PKT:
+
+                for(unsigned i = 0; i < noutput_items; i++)
+                {
+                    out[i] = in_sig[i];
+
+                    d_offset ++;
+
+                    if(d_offset == d_pkt_size)
+                    {
+                        d_offset = 0;
+                        d_rx_state = STATE_RX_SKIP;
+
+                        consume_each (i);
+                        return i;
+                        
+                    }
+                }
+
+                consume_each (noutput_items);
+                return noutput_items;
+
+            case STATE_RX_SKIP:
+
+                // Output 0 item
+                for(unsigned i = 0; i < noutput_items; i++)
+                {
+                    d_offset ++;
+
+                    if(d_offset == d_skip_samp)
+                    {
+                        d_offset = 0;
+                        d_rx_state = STATE_RX_NULL;
+
+                        consume_each (i);
+                        return 0;
+                        }
+                    }
+              
+                consume_each (noutput_items);
+                return 0;
+            default:
+
+                throw std::runtime_error("invalid state");
+                break;
       }
-
-      // Tell runtime system how many input items we consumed on
-      // each input stream.
-      consume_each ((i + 1) * d_pkt_len);
-
-      // Tell runtime system how many output items we produced.
-      return extracted_pkt;
+      // int extracted_pkt = 0;    // The number of extracted packet in this stream
+      // bool pkt_detected = false, sym_sync = false;
+      //
+      // // Extract the packet from the results of energy detection and symbol synchronization
+      // unsigned i = 0;
+      // while(i < noutput_items * d_pkt_size)
+      // {
+      //     if(in_ed[i] > d_thr)
+      //     {
+      //         extracted_pkt ++;
+      //
+      //         // If the packet is detected, then find the start of it in the following (d_pkt_size) samples
+      //         for(unsigned j = 1; j < d_pkt_size; j++)
+      //               i = (in_ss[i + j] > in_ss[i]) ? (i + j) : i;
+      //
+      //
+      //         // Output the following (d_pkt_size) samples, and continuously find the next packet
+      //         size_t block_size = output_signature()->sizeof_stream_item (0);
+      //         memcpy(out + (extracted_pkt -1) * d_pkt_size, in_sig + i, block_size);
+      //         i += d_pkt_size;
+      //
+      //     }
+      //     else
+      //         i++;
+      //
+      // }
+      //
+      // // Tell runtime system how many input items we consumed on
+      // // each input stream.
+      // consume_each ((i + 1) * d_pkt_size);
+      //
+      // // Tell runtime system how many output items we produced.
+      // return extracted_pkt;
     }
 
   } /* namespace beamnet */

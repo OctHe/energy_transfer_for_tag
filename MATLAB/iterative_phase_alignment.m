@@ -8,7 +8,7 @@ function bf_weight = iterative_phase_alignment(H, Ntx, Nloop)
 % Params
 phase_now = zeros(Ntx, 1);           % The updated phase
 phase_max = zeros(Ntx, 1);           % The phase for the max power
-power_rx_max = 0;
+power_max = 0;
 
 % Iteration loop
 for ite_index = 1: Nloop
@@ -17,10 +17,11 @@ for ite_index = 1: Nloop
     phase_now = phase_now + phase_delta;
     bf_weight = exp(1j * phase_now);
     
-    % power comparison
-    power_rx_now = max(min(abs(H * bf_weight).^2, [], 1));
-    if power_rx_now > power_rx_max
-        power_rx_max = power_rx_now;
+    % Power comparison
+    power_now = min(abs(H * bf_weight).^2);
+
+    if power_now > power_max
+        power_max = power_now;
         phase_max = phase_now;
     else
         phase_now = phase_max;

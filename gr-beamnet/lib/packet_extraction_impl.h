@@ -29,14 +29,20 @@ namespace gr {
     class packet_extraction_impl : public packet_extraction
     {
      private:
+        int d_skip_samp;  // Skip the samples after finishing the packet extraction
         int d_fft_size;
-        int d_pkt_size; // Packet size in symbol
-        int d_pkt_len;  // Packet size in sample
+        int d_pkt_size;  // Packet size in sample
+
+        int d_offset;
+        int d_pkt_index;
+        float d_peak;
+
+        int d_rx_state;
 
         float d_thr;
 
      public:
-      packet_extraction_impl(int fft_size, int pkt_size, float thr);
+      packet_extraction_impl(float samp_rate, int fft_size, int pkt_size, float thr);
       ~packet_extraction_impl();
 
       // Where all the action really happens

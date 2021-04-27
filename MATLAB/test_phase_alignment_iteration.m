@@ -42,15 +42,15 @@ end
 
 %% Iterative phase alignment
 bf_weight_ite_norm = iterative_phase_alignment(norm_ch, Ntx, Nloop);
-bf_power_ite_norm = abs(truth_ch * bf_weight_ite_norm * Ptx).^2;
+bf_power_ite_norm = abs(truth_ch * bf_weight_ite_norm * sqrt(Ptx)).^2;
 bf_power_ite_norm = 10 * log10(bf_power_ite_norm);
 
 bf_weight_ite_truth = iterative_phase_alignment(truth_ch, Ntx, Nloop);
-bf_power_ite_truth = abs(truth_ch * bf_weight_ite_truth * Ptx).^2;
+bf_power_ite_truth = abs(truth_ch * bf_weight_ite_truth * sqrt(Ptx)).^2;
 bf_power_ite_truth = 10 * log10(bf_power_ite_truth);
 
 %% Exhausted phase alignment
-signal_tx = generator_phase_mat(Ntx, 8) * Ptx;
+signal_tx = phase_mat_generation(Ntx, 8) * sqrt(Ptx);
 power_rx = abs(truth_ch * signal_tx).^2;
 
 [~, bf_index_exh] = max(min(power_rx, [], 1));

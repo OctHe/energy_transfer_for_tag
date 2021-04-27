@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<block>
+  <name>Phase Alignment</name>
+  <key>beamnet_phase_alignment</key>
+  <category>[beamnet]</category>
+  <import>import beamnet</import>
+  <make>beamnet.phase_alignment($tx, $tag)</make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>TX Number</name>
+    <key>tx</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Tag number</name>
+    <key>tag</key>
+    <type>int</type>
+  </param>
+
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <sink>
+    <name>ce</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
+
+  <!-- Make one 'source' node per output. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <source>
+    <name>phase</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
+</block>

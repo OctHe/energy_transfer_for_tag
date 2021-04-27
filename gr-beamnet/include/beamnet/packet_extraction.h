@@ -46,7 +46,7 @@ namespace gr {
        * class. beamnet::packet_extraction::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int fft_size, int pkt_size, float thr);
+      static sptr make(float samp_rate, int fft_size, int pkt_size, float thr);
     };
 
   } // namespace beamnet

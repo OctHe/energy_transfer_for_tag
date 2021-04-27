@@ -30,20 +30,20 @@ namespace gr {
   namespace beamnet {
 
     energy_detector::sptr
-    energy_detector::make(int pkt_len)
+    energy_detector::make(int pkt_size)
     {
       return gnuradio::get_initial_sptr
-        (new energy_detector_impl(pkt_len));
+        (new energy_detector_impl(pkt_size));
     }
 
     /*
      * The private constructor
      */
-    energy_detector_impl::energy_detector_impl(int pkt_len)
+    energy_detector_impl::energy_detector_impl(int pkt_size)
       : gr::block("energy_detector",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(float))),
-      d_pkt_len(pkt_len)
+      d_pkt_size(pkt_size)
     {
     }
 
@@ -58,7 +58,7 @@ namespace gr {
     energy_detector_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
-        ninput_items_required[0] = noutput_items + d_pkt_len;
+        ninput_items_required[0] = noutput_items + d_pkt_size;
     }
 
     int
@@ -70,20 +70,20 @@ namespace gr {
       const gr_complex *in = (const gr_complex *) input_items[0];
       float *out = (float *) output_items[0];
 
-      float res[noutput_items + d_pkt_len];
+      float res[noutput_items + d_pkt_size];
 
       // Calculate the energy  
-        volk_32fc_magnitude_squared_32f(res, in, noutput_items + d_pkt_len);
+        volk_32fc_magnitude_squared_32f(res, in, noutput_items + d_pkt_size);
 
         out[0] = 0;
-        for(int i = 0; i < d_pkt_len; i++)
+        for(int i = 0; i < d_pkt_size; i++)
             out[0] += res[i];
 
         for(int i = 1; i < noutput_items; i++)
-            out[i] = out[i-1] + res[i-1 + d_pkt_len] - res[i-1];
+            out[i] = out[i-1] + res[i-1 + d_pkt_size] - res[i-1];
         
         for(int i = 0; i < noutput_items; i++)
-            out[i] = out[i] / d_pkt_len;
+            out[i] = out[i] / d_pkt_size;
 
       // Tell runtime system how many input items we consumed on
       // each input stream.
