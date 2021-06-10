@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classgr_1_1beamnet_1_1correlation__detector__impl" kind="class" language="C++" prot="public">
+    <compoundname>gr::beamnet::correlation_detector_impl</compoundname>
+    <basecompoundref refid="classgr_1_1beamnet_1_1correlation__detector" prot="public" virt="non-virtual">gr::beamnet::correlation_detector</basecompoundref>
+    <includes refid="correlation__detector__impl_8h" local="no">correlation_detector_impl.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a61c679a6a594446255f5fab3a2db74e5" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int gr::beamnet::correlation_detector_impl::d_length</definition>
+        <argsstring></argsstring>
+        <name>d_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="33" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a1393765430561f233bf8a3f4ef5dc819" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gr::beamnet::correlation_detector_impl::d_threshold</definition>
+        <argsstring></argsstring>
+        <name>d_threshold</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="34" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a9025bb6490397d55649a8f9ce7103e7f" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gr::beamnet::correlation_detector_impl::d_deviation</definition>
+        <argsstring></argsstring>
+        <name>d_deviation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="35" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a2ad3299f3fe5591948b7f5ce840f5b45" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool gr::beamnet::correlation_detector_impl::d_detect</definition>
+        <argsstring></argsstring>
+        <name>d_detect</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="36" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a8ca618e6c91f6d9d49ec3910010c95ac" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool gr::beamnet::correlation_detector_impl::d_sent</definition>
+        <argsstring></argsstring>
+        <name>d_sent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="37" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a9dde9ba19b1f75217898e0a0bdc64524" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>gr::beamnet::correlation_detector_impl::correlation_detector_impl</definition>
+        <argsstring>(int len, float threshold, float deviation)</argsstring>
+        <name>correlation_detector_impl</name>
+        <param>
+          <type>int</type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>threshold</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>deviation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="41" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a151652a87dcb6b13a63f14b1949e5aa7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>gr::beamnet::correlation_detector_impl::~correlation_detector_impl</definition>
+        <argsstring>()</argsstring>
+        <name>~correlation_detector_impl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="42" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1correlation__detector__impl_1a917bbed04d819accf3b123828afd43f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void gr::beamnet::correlation_detector_impl::forecast</definition>
+        <argsstring>(int noutput_items, gr_vector_int &amp;ninput_items_required)</argsstring>
+        <name>forecast</name>
+        <param>
+          <type>int</type>
+          <declname>noutput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_int &amp;</type>
+          <declname>ninput_items_required</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="45" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1correlation__detector__impl_1adf68385721aeee53f0680db7091fec8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int gr::beamnet::correlation_detector_impl::general_work</definition>
+        <argsstring>(int noutput_items, gr_vector_int &amp;ninput_items, gr_vector_const_void_star &amp;input_items, gr_vector_void_star &amp;output_items)</argsstring>
+        <name>general_work</name>
+        <param>
+          <type>int</type>
+          <declname>noutput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_int &amp;</type>
+          <declname>ninput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_const_void_star &amp;</type>
+          <declname>input_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_void_star &amp;</type>
+          <declname>output_items</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="47" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="7">
+        <label>block</label>
+      </node>
+      <node id="5">
+        <label>gr::beamnet::correlation_detector_impl</label>
+        <link refid="classgr_1_1beamnet_1_1correlation__detector__impl"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>gr::beamnet::correlation_detector</label>
+        <link refid="classgr_1_1beamnet_1_1correlation__detector"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="10">
+        <label>block</label>
+      </node>
+      <node id="8">
+        <label>gr::beamnet::correlation_detector_impl</label>
+        <link refid="classgr_1_1beamnet_1_1correlation__detector__impl"/>
+        <childnode refid="9" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>gr::beamnet::correlation_detector</label>
+        <link refid="classgr_1_1beamnet_1_1correlation__detector"/>
+        <childnode refid="10" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" line="30" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/correlation_detector_impl.h" bodystart="29" bodyend="51"/>
+    <listofallmembers>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a9dde9ba19b1f75217898e0a0bdc64524" prot="public" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>correlation_detector_impl</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a2ad3299f3fe5591948b7f5ce840f5b45" prot="private" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>d_detect</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a9025bb6490397d55649a8f9ce7103e7f" prot="private" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>d_deviation</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a61c679a6a594446255f5fab3a2db74e5" prot="private" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>d_length</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a8ca618e6c91f6d9d49ec3910010c95ac" prot="private" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>d_sent</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a1393765430561f233bf8a3f4ef5dc819" prot="private" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>d_threshold</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a917bbed04d819accf3b123828afd43f4" prot="public" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>forecast</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1adf68385721aeee53f0680db7091fec8c" prot="public" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>general_work</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector_1a7919f9c67549b0b3b5e1bbc31bcad478" prot="public" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>make</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector_1a5d07f42626560a6ec7e9d5399e2d9e4b" prot="public" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>sptr</name></member>
+      <member refid="classgr_1_1beamnet_1_1correlation__detector__impl_1a151652a87dcb6b13a63f14b1949e5aa7" prot="public" virt="non-virtual"><scope>gr::beamnet::correlation_detector_impl</scope><name>~correlation_detector_impl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

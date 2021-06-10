@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_08d694fc0c9970d8458bfabc9ca08a1d" kind="dir">
+    <compoundname>beamnet</compoundname>
+    <innerfile refid="api_8h">api.h</innerfile>
+    <innerfile refid="correlation__detector_8h">correlation_detector.h</innerfile>
+    <innerfile refid="energy__detector_8h">energy_detector.h</innerfile>
+    <innerfile refid="packet__extraction_8h">packet_extraction.h</innerfile>
+    <innerfile refid="packet__trigger_8h">packet_trigger.h</innerfile>
+    <innerfile refid="source__pkt_8h">source_pkt.h</innerfile>
+    <innerfile refid="symbol__sync_8h">symbol_sync.h</innerfile>
+    <innerfile refid="tx__slave__mux_8h">tx_slave_mux.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/include/beamnet/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_97aefd0d527b934f1d99a682da8fe6a9" kind="dir">
+    <compoundname>lib</compoundname>
+    <innerfile refid="correlation__detector__impl_8h">correlation_detector_impl.h</innerfile>
+    <innerfile refid="energy__detector__impl_8h">energy_detector_impl.h</innerfile>
+    <innerfile refid="packet__extraction__impl_8h">packet_extraction_impl.h</innerfile>
+    <innerfile refid="packet__trigger__impl_8h">packet_trigger_impl.h</innerfile>
+    <innerfile refid="rx__header_8h">rx_header.h</innerfile>
+    <innerfile refid="source__pkt__impl_8h">source_pkt_impl.h</innerfile>
+    <innerfile refid="symbol__sync__impl_8h">symbol_sync_impl.h</innerfile>
+    <innerfile refid="tx__header_8h">tx_header.h</innerfile>
+    <innerfile refid="tx__slave__mux__impl_8h">tx_slave_mux_impl.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/"/>
+  </compounddef>
+</doxygen>

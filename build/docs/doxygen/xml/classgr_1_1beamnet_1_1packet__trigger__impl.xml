@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classgr_1_1beamnet_1_1packet__trigger__impl" kind="class" language="C++" prot="public">
+    <compoundname>gr::beamnet::packet_trigger_impl</compoundname>
+    <basecompoundref refid="classgr_1_1beamnet_1_1packet__trigger" prot="public" virt="non-virtual">gr::beamnet::packet_trigger</basecompoundref>
+    <includes refid="packet__trigger__impl_8h" local="no">packet_trigger_impl.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1packet__trigger__impl_1a4c3684cc503e5fb104102a6241ff7e25" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int gr::beamnet::packet_trigger_impl::d_fft_size</definition>
+        <argsstring></argsstring>
+        <name>d_fft_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="32" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1packet__trigger__impl_1ad9824e6f13fb7bf06468ddcfbebf09ec" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int gr::beamnet::packet_trigger_impl::d_pkt_size</definition>
+        <argsstring></argsstring>
+        <name>d_pkt_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="33" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1packet__trigger__impl_1a6bf085fbd8613146443d902442e640af" prot="private" static="no" mutable="no">
+        <type>float</type>
+        <definition>float gr::beamnet::packet_trigger_impl::d_thr</definition>
+        <argsstring></argsstring>
+        <name>d_thr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="35" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1packet__trigger__impl_1a6f7768bba67df61f11ce372e3ba0b9c2" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int gr::beamnet::packet_trigger_impl::d_state</definition>
+        <argsstring></argsstring>
+        <name>d_state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="37" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1packet__trigger__impl_1a1a3e0ac4c8ab83d6bce4cd9a7c39805d" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool gr::beamnet::packet_trigger_impl::d_find_trig</definition>
+        <argsstring></argsstring>
+        <name>d_find_trig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="38" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1packet__trigger__impl_1a55b7d05c7f10942546eb7f1ea4a8d948" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int gr::beamnet::packet_trigger_impl::d_detect_offset</definition>
+        <argsstring></argsstring>
+        <name>d_detect_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="39" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classgr_1_1beamnet_1_1packet__trigger__impl_1aa6ed251792961d89af7a9ebf8ad9a71d" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int gr::beamnet::packet_trigger_impl::d_pkt_offset</definition>
+        <argsstring></argsstring>
+        <name>d_pkt_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="40" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1packet__trigger__impl_1ae606d86eb0ad467cbe3d7ffdf9f7bee4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>gr::beamnet::packet_trigger_impl::packet_trigger_impl</definition>
+        <argsstring>(int fft_size, int pkt_size, float thr)</argsstring>
+        <name>packet_trigger_impl</name>
+        <param>
+          <type>int</type>
+          <declname>fft_size</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pkt_size</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>thr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="43" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1packet__trigger__impl_1ad6025b5e76c1ae1a835d02a7adc94cb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>gr::beamnet::packet_trigger_impl::~packet_trigger_impl</definition>
+        <argsstring>()</argsstring>
+        <name>~packet_trigger_impl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="44" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1packet__trigger__impl_1a1b917534dac40a3391bd27d48e79de98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void gr::beamnet::packet_trigger_impl::forecast</definition>
+        <argsstring>(int noutput_items, gr_vector_int &amp;ninput_items_required)</argsstring>
+        <name>forecast</name>
+        <param>
+          <type>int</type>
+          <declname>noutput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_int &amp;</type>
+          <declname>ninput_items_required</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="47" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classgr_1_1beamnet_1_1packet__trigger__impl_1a5cddc23b6bcd2fe36b63bf8ae73b7d35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int gr::beamnet::packet_trigger_impl::general_work</definition>
+        <argsstring>(int noutput_items, gr_vector_int &amp;ninput_items, gr_vector_const_void_star &amp;input_items, gr_vector_void_star &amp;output_items)</argsstring>
+        <name>general_work</name>
+        <param>
+          <type>int</type>
+          <declname>noutput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_int &amp;</type>
+          <declname>ninput_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_const_void_star &amp;</type>
+          <declname>input_items</declname>
+        </param>
+        <param>
+          <type>gr_vector_void_star &amp;</type>
+          <declname>output_items</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="49" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="38">
+        <label>gr::beamnet::packet_trigger_impl</label>
+        <link refid="classgr_1_1beamnet_1_1packet__trigger__impl"/>
+        <childnode refid="39" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>gr::beamnet::packet_trigger</label>
+        <link refid="classgr_1_1beamnet_1_1packet__trigger"/>
+        <childnode refid="40" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>block</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="41">
+        <label>gr::beamnet::packet_trigger_impl</label>
+        <link refid="classgr_1_1beamnet_1_1packet__trigger__impl"/>
+        <childnode refid="42" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>gr::beamnet::packet_trigger</label>
+        <link refid="classgr_1_1beamnet_1_1packet__trigger"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>block</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" line="30" column="1" bodyfile="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/packet_trigger_impl.h" bodystart="29" bodyend="53"/>
+    <listofallmembers>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1a55b7d05c7f10942546eb7f1ea4a8d948" prot="private" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>d_detect_offset</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1a4c3684cc503e5fb104102a6241ff7e25" prot="private" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>d_fft_size</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1a1a3e0ac4c8ab83d6bce4cd9a7c39805d" prot="private" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>d_find_trig</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1aa6ed251792961d89af7a9ebf8ad9a71d" prot="private" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>d_pkt_offset</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1ad9824e6f13fb7bf06468ddcfbebf09ec" prot="private" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>d_pkt_size</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1a6f7768bba67df61f11ce372e3ba0b9c2" prot="private" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>d_state</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1a6bf085fbd8613146443d902442e640af" prot="private" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>d_thr</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1a1b917534dac40a3391bd27d48e79de98" prot="public" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>forecast</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1a5cddc23b6bcd2fe36b63bf8ae73b7d35" prot="public" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>general_work</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger_1acc5b450e72a55aa07d2e06851c73648f" prot="public" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>make</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1ae606d86eb0ad467cbe3d7ffdf9f7bee4" prot="public" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>packet_trigger_impl</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger_1ae8fd3a71fd43a0b5e5ff02c6376b6576" prot="public" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>sptr</name></member>
+      <member refid="classgr_1_1beamnet_1_1packet__trigger__impl_1ad6025b5e76c1ae1a835d02a7adc94cb3" prot="public" virt="non-virtual"><scope>gr::beamnet::packet_trigger_impl</scope><name>~packet_trigger_impl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

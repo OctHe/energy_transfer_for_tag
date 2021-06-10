@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="energy__detector_8h" kind="file" language="C++">
+    <compoundname>energy_detector.h</compoundname>
+    <includes refid="api_8h" local="no">beamnet/api.h</includes>
+    <includes local="no">gnuradio/block.h</includes>
+    <includedby refid="energy__detector__impl_8h" local="no">energy_detector_impl.h</includedby>
+    <incdepgraph>
+      <node id="29">
+        <label>energy_detector.h</label>
+        <link refid="energy__detector_8h"/>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>beamnet/api.h</label>
+        <link refid="api_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>gnuradio/attributes.h</label>
+      </node>
+      <node id="32">
+        <label>gnuradio/block.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="33">
+        <label>energy_detector.h</label>
+        <link refid="energy__detector_8h"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>energy_detector_impl.h</label>
+        <link refid="energy__detector__impl_8h"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classgr_1_1beamnet_1_1energy__detector" prot="public">gr::beamnet::energy_detector</innerclass>
+    <innernamespace refid="namespacegr">gr</innernamespace>
+    <innernamespace refid="namespacegr_1_1beamnet">gr::beamnet</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/include/beamnet/energy_detector.h"/>
+  </compounddef>
+</doxygen>

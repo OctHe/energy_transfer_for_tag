@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/beamnet/api.h
+gnuradio/attributes.h
+-
+
+../include/beamnet/source_pkt.h
+beamnet/api.h
+-
+gnuradio/sync_block.h
+-
+
+/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/source_pkt_impl.cc
+config.h
+/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/config.h
+gnuradio/io_signature.h
+-
+gnuradio/expj.h
+-
+volk/volk.h
+-
+source_pkt_impl.h
+/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/source_pkt_impl.h
+tx_header.h
+/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/tx_header.h
+
+/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/source_pkt_impl.h
+beamnet/source_pkt.h
+-
+
+/home/shiyue_deep/Projects/BeamNet/gr-beamnet/lib/tx_header.h
+

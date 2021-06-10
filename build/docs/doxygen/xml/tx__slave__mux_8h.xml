@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="tx__slave__mux_8h" kind="file" language="C++">
+    <compoundname>tx_slave_mux.h</compoundname>
+    <includes refid="api_8h" local="no">beamnet/api.h</includes>
+    <includes local="no">gnuradio/block.h</includes>
+    <includedby refid="tx__slave__mux__impl_8h" local="no">tx_slave_mux_impl.h</includedby>
+    <incdepgraph>
+      <node id="98">
+        <label>beamnet/api.h</label>
+        <link refid="api_8h"/>
+        <childnode refid="99" relation="include">
+        </childnode>
+      </node>
+      <node id="99">
+        <label>gnuradio/attributes.h</label>
+      </node>
+      <node id="97">
+        <label>tx_slave_mux.h</label>
+        <link refid="tx__slave__mux_8h"/>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+      </node>
+      <node id="100">
+        <label>gnuradio/block.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="102">
+        <label>tx_slave_mux_impl.h</label>
+        <link refid="tx__slave__mux__impl_8h"/>
+      </node>
+      <node id="101">
+        <label>tx_slave_mux.h</label>
+        <link refid="tx__slave__mux_8h"/>
+        <childnode refid="102" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classgr_1_1beamnet_1_1tx__slave__mux" prot="public">gr::beamnet::tx_slave_mux</innerclass>
+    <innernamespace refid="namespacegr">gr</innernamespace>
+    <innernamespace refid="namespacegr_1_1beamnet">gr::beamnet</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/include/beamnet/tx_slave_mux.h"/>
+  </compounddef>
+</doxygen>

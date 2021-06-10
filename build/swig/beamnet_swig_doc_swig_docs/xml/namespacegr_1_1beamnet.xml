@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacegr_1_1beamnet" kind="namespace" language="C++">
+    <compoundname>gr::beamnet</compoundname>
+    <innerclass refid="classgr_1_1beamnet_1_1correlation__detector" prot="public">gr::beamnet::correlation_detector</innerclass>
+    <innerclass refid="classgr_1_1beamnet_1_1energy__detector" prot="public">gr::beamnet::energy_detector</innerclass>
+    <innerclass refid="classgr_1_1beamnet_1_1packet__extraction" prot="public">gr::beamnet::packet_extraction</innerclass>
+    <innerclass refid="classgr_1_1beamnet_1_1packet__trigger" prot="public">gr::beamnet::packet_trigger</innerclass>
+    <innerclass refid="classgr_1_1beamnet_1_1source__pkt" prot="public">gr::beamnet::source_pkt</innerclass>
+    <innerclass refid="classgr_1_1beamnet_1_1symbol__sync" prot="public">gr::beamnet::symbol_sync</innerclass>
+    <innerclass refid="classgr_1_1beamnet_1_1tx__slave__mux" prot="public">gr::beamnet::tx_slave_mux</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/shiyue_deep/Projects/BeamNet/gr-beamnet/include/beamnet/correlation_detector.h" line="29" column="1"/>
+  </compounddef>
+</doxygen>
