@@ -4,8 +4,12 @@
 *~
 .*
 
-gr-beamnet/build
-gr-beamnet/tags
+# Build and tag files
+./build
+tags
+
+# pyc files
+*.pyc
 
 # Data files
 *.bin
