@@ -43,7 +43,6 @@ namespace gr {
       : gr::block("symbol_sync",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(float))),
-        d_fft_size(fft_size),
         d_sync_word(sync_word)
     {
         d_corr_len = sync_word.size();

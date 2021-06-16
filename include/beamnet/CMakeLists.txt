@@ -23,12 +23,9 @@
 ########################################################################
 install(FILES
     api.h
-    correlation_detector.h
     energy_detector.h
     symbol_sync.h
     packet_extraction.h
-    packet_trigger.h
-    source_pkt.h
-    tx_slave_mux.h
+    source_signal.h
     packet_demux.h DESTINATION include/beamnet
 )

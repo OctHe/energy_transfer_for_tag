@@ -78,13 +78,11 @@ namespace gr {
         out[0] = 0;
         for(int i = 0; i < d_pkt_size; i++)
             out[0] += res[i];
+        out[0] /= d_pkt_size;
 
         for(int i = 1; i < noutput_items; i++)
-            out[i] = out[i-1] + res[i-1 + d_pkt_size] - res[i-1];
+            out[i] = out[i-1] + (res[i-1 + d_pkt_size] - res[i-1]) / d_pkt_size;
         
-        for(int i = 0; i < noutput_items; i++)
-            out[i] = out[i] / d_pkt_size;
-
       // Tell runtime system how many input items we consumed on
       // each input stream.
       consume_each (noutput_items);

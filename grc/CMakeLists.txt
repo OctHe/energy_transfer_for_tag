@@ -18,14 +18,10 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 install(FILES
-    beamnet_correlation_detector.xml
-    beamnet_channel_estimation.xml
     beamnet_energy_detector.xml
     beamnet_symbol_sync.xml
     beamnet_packet_extraction.xml
-    beamnet_packet_trigger.xml
-    beamnet_source_pkt.xml
-    beamnet_tx_slave_mux.xml
+    beamnet_source_signal.xml
     beamnet_packet_demux.xml
     beamnet_phase_alignment.xml
     DESTINATION share/gnuradio/grc/blocks

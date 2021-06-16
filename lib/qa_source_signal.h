@@ -19,20 +19,28 @@
  */
 
 
-#include <gnuradio/attributes.h>
-#include <cppunit/TestAssert.h>
-#include "qa_correlation_detector.h"
-#include <beamnet/correlation_detector.h>
+#ifndef _QA_SOURCE_SIGNAL_H_
+#define _QA_SOURCE_SIGNAL_H_
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/TestCase.h>
 
 namespace gr {
   namespace beamnet {
 
-    void
-    qa_correlation_detector::t1()
+    class qa_source_signal : public CppUnit::TestCase
     {
-      // Put test here
-    }
+    public:
+      CPPUNIT_TEST_SUITE(qa_source_signal);
+      CPPUNIT_TEST(t1);
+      CPPUNIT_TEST_SUITE_END();
+
+    private:
+      void t1();
+    };
 
   } /* namespace beamnet */
 } /* namespace gr */
+
+#endif /* _QA_SOURCE_SIGNAL_H_ */
 

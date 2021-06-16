@@ -101,7 +101,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(344, 96)</value>
+      <value>(336, 96)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -128,7 +128,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(216, 96)</value>
+      <value>(208, 96)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -155,7 +155,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(304, 8)</value>
+      <value>(288, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -182,7 +182,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(576, 8)</value>
+      <value>(736, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -190,11 +190,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>hd_len</value>
+      <value>interval_size</value>
     </param>
     <param>
       <key>value</key>
-      <value>1</value>
+      <value>pkt_interval * fft_size</value>
     </param>
   </block>
   <block>
@@ -209,7 +209,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(672, 8)</value>
+      <value>(648, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -236,7 +236,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(776, 8)</value>
+      <value>(536, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -244,11 +244,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>pkt_size</value>
+      <value>pkt_interval</value>
     </param>
     <param>
       <key>value</key>
-      <value>fft_size * (hd_len + hd_len * tx + pd_len)</value>
+      <value>1</value>
     </param>
   </block>
   <block>
@@ -263,7 +263,34 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 96)</value>
+      <value>(856, 8)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>pkt_size</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>fft_size * (1 + tx + pd_len)</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(616, 96)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -290,7 +317,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(480, 96)</value>
+      <value>(472, 96)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -317,7 +344,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(192, 8)</value>
+      <value>(184, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -344,7 +371,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(968, 8)</value>
+      <value>(1040, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -371,7 +398,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(488, 8)</value>
+      <value>(456, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -398,7 +425,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(872, 8)</value>
+      <value>(944, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -425,7 +452,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(400, 8)</value>
+      <value>(376, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -515,7 +542,7 @@
     </param>
     <param>
       <key>hd_len</key>
-      <value>hd_len</value>
+      <value>1</value>
     </param>
     <param>
       <key>id</key>
@@ -582,7 +609,7 @@
     </param>
     <param>
       <key>pkt_size</key>
-      <value>pkt_size</value>
+      <value>pkt_size + interval_size</value>
     </param>
     <param>
       <key>samp_rate</key>
@@ -641,10 +668,10 @@
     </param>
   </block>
   <block>
-    <key>beamnet_source_pkt</key>
+    <key>beamnet_source_signal</key>
     <param>
       <key>baseline</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>alias</key>
@@ -668,23 +695,19 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(88, 384)</value>
+      <value>(96, 184)</value>
     </param>
     <param>
       <key>_rotation</key>
       <value>0</value>
     </param>
     <param>
-      <key>hd_len</key>
-      <value>hd_len</value>
-    </param>
-    <param>
       <key>id</key>
-      <value>beamnet_source_pkt_0</value>
+      <value>beamnet_source_signal_0</value>
     </param>
     <param>
       <key>index</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -693,6 +716,10 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>null_len</key>
+      <value>pkt_interval</value>
     </param>
     <param>
       <key>pd_len</key>
@@ -704,14 +731,14 @@
     </param>
     <param>
       <key>tx</key>
-      <value>tx</value>
+      <value>2</value>
     </param>
   </block>
   <block>
-    <key>beamnet_source_pkt</key>
+    <key>beamnet_source_signal</key>
     <param>
       <key>baseline</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>alias</key>
@@ -735,23 +762,19 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(88, 184)</value>
+      <value>(96, 384)</value>
     </param>
     <param>
       <key>_rotation</key>
       <value>0</value>
     </param>
     <param>
-      <key>hd_len</key>
-      <value>hd_len</value>
-    </param>
-    <param>
       <key>id</key>
-      <value>beamnet_source_pkt_0_0</value>
+      <value>beamnet_source_signal_1</value>
     </param>
     <param>
       <key>index</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -760,6 +783,10 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>null_len</key>
+      <value>pkt_interval</value>
     </param>
     <param>
       <key>pd_len</key>
@@ -771,7 +798,7 @@
     </param>
     <param>
       <key>tx</key>
-      <value>tx</value>
+      <value>2</value>
     </param>
   </block>
   <block>
@@ -1241,7 +1268,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1144, 20)</value>
+      <value>(1192, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3639,25 +3666,25 @@
   </connection>
   <connection>
     <source_block_id>beamnet_phase_alignment_0</source_block_id>
-    <sink_block_id>beamnet_source_pkt_0</sink_block_id>
+    <sink_block_id>beamnet_source_signal_0</sink_block_id>
     <source_key>phase</source_key>
     <sink_key>phase</sink_key>
   </connection>
   <connection>
     <source_block_id>beamnet_phase_alignment_0</source_block_id>
-    <sink_block_id>beamnet_source_pkt_0_0</sink_block_id>
+    <sink_block_id>beamnet_source_signal_1</sink_block_id>
     <source_key>phase</source_key>
     <sink_key>phase</sink_key>
   </connection>
   <connection>
-    <source_block_id>beamnet_source_pkt_0</source_block_id>
-    <sink_block_id>reverse_fft_vxx_1_0</sink_block_id>
+    <source_block_id>beamnet_source_signal_0</source_block_id>
+    <sink_block_id>reverse_fft_vxx_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>beamnet_source_pkt_0_0</source_block_id>
-    <sink_block_id>reverse_fft_vxx_1</sink_block_id>
+    <source_block_id>beamnet_source_signal_1</source_block_id>
+    <sink_block_id>reverse_fft_vxx_1_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

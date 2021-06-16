@@ -25,31 +25,29 @@
 #include <gnuradio/io_signature.h>
 #include <gnuradio/expj.h>
 #include <volk/volk.h>
-#include "source_pkt_impl.h"
-#include "tx_header.h"
+#include "source_signal_impl.h"
 
-#define TWO_PI 6.2831852
 
 namespace gr {
   namespace beamnet {
 
-    source_pkt::sptr
-    source_pkt::make(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline)
+    source_signal::sptr
+    source_signal::make(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline)
     {
       return gnuradio::get_initial_sptr
-        (new source_pkt_impl(tx, index, fft_size, hd_len, pd_len, sync_word, baseline));
+        (new source_signal_impl(tx, index, fft_size, hd_len, pd_len, sync_word, baseline));
     }
 
     /*
      * The private constructor
      */
-    source_pkt_impl::source_pkt_impl(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline)
-      : gr::sync_block("source_pkt",
+    source_signal_impl::source_signal_impl(int tx, int index, int fft_size, int null_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline)
+      : gr::sync_block("source_signal",
               gr::io_signature::make(0, 0, 0),
               gr::io_signature::make(1, 1, sizeof(gr_complex) * fft_size)),
       d_tx(tx),
       d_fft_size(fft_size),
-      d_hd_len(hd_len),
+      d_null_len(null_len),
       d_pd_len(pd_len),
       d_sync_word(sync_word),
       d_tx_state(STATE_TX_NULL),
@@ -69,6 +67,12 @@ namespace gr {
                 {gr_complex(1, 0), gr_complex(1, 0)},
                 {gr_complex(1, 0), gr_complex(-1, 0)}
             };
+        else if(tx == 1)
+            d_ce_word = {
+                {gr_complex(1, 0)}
+            };
+        else
+            throw std::runtime_error("The number of TXs must be {1, 2, 4}");
 
        d_weight = gr_complex(1, 0);
        d_index = index % tx;
@@ -76,12 +80,15 @@ namespace gr {
        d_offset = 0;
 
        message_port_register_in(pmt::mp("phase"));
-       set_msg_handler(pmt::mp("phase"), boost::bind(&source_pkt_impl::phase_msg, this, _1));
+       set_msg_handler(pmt::mp("phase"), boost::bind(&source_signal_impl::phase_msg, this, _1));
 
     }
     
+    /*
+     * Message handler
+     */
     void
-    source_pkt_impl::phase_msg(pmt::pmt_t msg)
+    source_signal_impl::phase_msg(pmt::pmt_t msg)
     {
         float phase;
 
@@ -95,19 +102,19 @@ namespace gr {
     /*
      * Our virtual destructor.
      */
-    source_pkt_impl::~source_pkt_impl()
+    source_signal_impl::~source_signal_impl()
     {
     }
 
     int
-    source_pkt_impl::work(int noutput_items,
+    source_signal_impl::work(int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
     {
       gr_complex *out = (gr_complex *) output_items[0];
 
       // Signal from slave source
-      int DATA_INDEX = 9; // The carrier index of the data (8 is DC value)
+      int DATA_INDEX = d_fft_size / 2 +1; // The carrier index of the data (d_fft_size/2 is the DC carrier)
       std::vector<gr_complex> ce_signal(d_fft_size, 0); 
       size_t block_size = output_signature()->sizeof_stream_item (0);
 
@@ -123,7 +130,7 @@ namespace gr {
                 out += d_fft_size;
                 d_offset ++;
 
-                if(d_offset == d_hd_len)
+                if(d_offset == d_null_len)
                 {
                     d_offset = 0;
                     d_tx_state = STATE_TX_SYNC;
@@ -137,7 +144,7 @@ namespace gr {
                 out += d_fft_size;
                 d_offset ++;
 
-                if(d_offset == d_hd_len)
+                if(d_offset == 1) // The length of SYNC_WORD is d_fft_size
                 {
                     d_offset = 0;
                     d_tx_state = STATE_TX_CE;
@@ -146,13 +153,13 @@ namespace gr {
 
             case STATE_TX_CE:
 
-                ce_signal[DATA_INDEX] = d_ce_word[d_index][d_offset / d_hd_len];
+                ce_signal[DATA_INDEX] = d_ce_word[d_index][d_offset];
                 memcpy(out, ce_signal.data(), block_size);
 
                 out += d_fft_size;
                 d_offset ++;
 
-                if(d_offset == d_hd_len * d_tx)
+                if(d_offset == d_tx)
                 {
                     d_offset = 0;
                     d_tx_state = STATE_TX_PD;
@@ -178,9 +185,12 @@ namespace gr {
                         break;
 
                     case STATE_TX_PD_BF:
+
                         memset(out, 0, block_size);
                         out[DATA_INDEX] = 1;
-                        volk_32fc_s32fc_multiply_32fc(out, out, d_weight, d_fft_size);
+
+                        if(!d_baseline)
+                            volk_32fc_s32fc_multiply_32fc(out, out, d_weight, d_fft_size);
 
                         out += d_fft_size;
                         d_offset ++;

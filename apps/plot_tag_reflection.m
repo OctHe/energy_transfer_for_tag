@@ -9,12 +9,9 @@ fft_size = 16;
 hd_len = 1;
 pd_len = 197;
 
-read_raw_start = 0e6;     % read_start < read_size
-read_raw_size = 10e6;
+read_raw_start = 2.75e6;     % read_start < read_size
+read_raw_size = 2.8e6;
 
-pkt_size = (hd_len + tx * hd_len + pd_len) * fft_size;
-
-read_pkt_size = 13 * pkt_size;
 
 %% File data
 fid = fopen('debug_tag_reflection.bin', 'r');
@@ -37,11 +34,12 @@ ss_res = ss_res(read_raw_start +1: end);
 figure; hold on;
 plot(((read_raw_start +1): read_raw_size) / samp_rate, real(data));
 plot(((read_raw_start +1): read_raw_size) / samp_rate, imag(data));
+title('Raw data');
 
 figure;
 plot(((read_raw_start +1): read_raw_size) / samp_rate, ed_res);
+title('Packet Energy');
 
 figure;
 plot(((read_raw_start +1): read_raw_size) / samp_rate, ss_res);
-
-
+title('Symbol Peak');

@@ -5,7 +5,7 @@
 .*
 
 # Build and tag files
-./build
+build
 tags
 
 # pyc files

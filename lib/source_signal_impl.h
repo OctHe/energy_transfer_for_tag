@@ -18,21 +18,23 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef INCLUDED_BEAMNET_SOURCE_PKT_IMPL_H
-#define INCLUDED_BEAMNET_SOURCE_PKT_IMPL_H
+#ifndef INCLUDED_BEAMNET_SOURCE_SIGNAL_IMPL_H
+#define INCLUDED_BEAMNET_SOURCE_SIGNAL_IMPL_H
 
-#include <beamnet/source_pkt.h>
+#define TWO_PI 6.2831852
+
+#include <beamnet/source_signal.h>
 
 namespace gr {
   namespace beamnet {
 
-    class source_pkt_impl : public source_pkt
+    class source_signal_impl : public source_signal
     {
      private:
       int d_tx;
       int d_index;
       int d_fft_size;
-      int d_hd_len;
+      int d_null_len;
       int d_pd_len;
 
       gr_complex d_weight;
@@ -42,13 +44,13 @@ namespace gr {
 
       int d_tx_state;
       int d_pd_state;
-      int d_baseline; // 1: use baseline algorithm; 0: use the proposed algorithm
+      int d_baseline; // 1: baseline (blind beamforming) algorithm; 0: use the proposed algorithm
 
       int d_offset;
 
      public:
-      source_pkt_impl(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline);
-      ~source_pkt_impl();
+      source_signal_impl(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline);
+      ~source_signal_impl();
 
       void phase_msg(pmt::pmt_t msg);
 
@@ -58,8 +60,23 @@ namespace gr {
          gr_vector_void_star &output_items);
     };
 
+    enum tx_states_t {
+        STATE_TX_PKT,
+
+        STATE_TX_NULL,
+        STATE_TX_SYNC,
+        STATE_TX_CE,
+        STATE_TX_PD,
+
+        STATE_TX_PD_CS,
+        STATE_TX_PD_BF,
+
+        STATE_RX_SYNC
+
+    };
+
   } // namespace beamnet
 } // namespace gr
 
-#endif /* INCLUDED_BEAMNET_SOURCE_PKT_IMPL_H */
+#endif /* INCLUDED_BEAMNET_SOURCE_SIGNAL_IMPL_H */
 

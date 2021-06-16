@@ -29,7 +29,6 @@ namespace gr {
     class symbol_sync_impl : public symbol_sync
     {
      private:
-         int d_fft_size;
          std::vector<gr_complex> d_sync_word;
          int d_corr_len;
 

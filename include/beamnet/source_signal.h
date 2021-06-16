@@ -18,42 +18,39 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef INCLUDED_BEAMNET_PACKET_TRIGGER_IMPL_H
-#define INCLUDED_BEAMNET_PACKET_TRIGGER_IMPL_H
 
-#include <beamnet/packet_trigger.h>
+#ifndef INCLUDED_BEAMNET_SOURCE_SIGNAL_H
+#define INCLUDED_BEAMNET_SOURCE_SIGNAL_H
+
+#include <beamnet/api.h>
+#include <gnuradio/sync_block.h>
 
 namespace gr {
   namespace beamnet {
 
-    class packet_trigger_impl : public packet_trigger
+    /*!
+     * \brief <+description of block+>
+     * \ingroup beamnet
+     *
+     */
+    class BEAMNET_API source_signal : virtual public gr::sync_block
     {
-     private:
-        int d_fft_size;
-        int d_pkt_size;  // Packet size in sample
-
-        float d_thr;
-
-        int d_state;
-        bool d_find_trig; // An indicator about the trigger
-        int d_detect_offset;
-        int d_pkt_offset;
-
      public:
-      packet_trigger_impl(int fft_size, int pkt_size, float thr);
-      ~packet_trigger_impl();
+      typedef boost::shared_ptr<source_signal> sptr;
 
-      // Where all the action really happens
-      void forecast (int noutput_items, gr_vector_int &ninput_items_required);
-
-      int general_work(int noutput_items,
-           gr_vector_int &ninput_items,
-           gr_vector_const_void_star &input_items,
-           gr_vector_void_star &output_items);
+      /*!
+       * \brief Return a shared_ptr to a new instance of beamnet::source_signal.
+       *
+       * To avoid accidental use of raw pointers, beamnet::source_signal's
+       * constructor is in a private implementation
+       * class. beamnet::source_signal::make is the public interface for
+       * creating new instances.
+       */
+      static sptr make(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline);
     };
 
   } // namespace beamnet
 } // namespace gr
 
-#endif /* INCLUDED_BEAMNET_PACKET_TRIGGER_IMPL_H */
+#endif /* INCLUDED_BEAMNET_SOURCE_SIGNAL_H */
 

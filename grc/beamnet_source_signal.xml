@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-  <name>TX Slave Mux</name>
-  <key>beamnet_tx_slave_mux</key>
+  <name>Source Signal</name>
+  <key>beamnet_source_signal</key>
   <category>[beamnet]</category>
   <import>import beamnet</import>
-  <make>beamnet.tx_slave_mux($tx, $fft_size, $hd_len, $pd_len)</make>
+  <make>beamnet.source_signal($tx, $index, $fft_size, $null_len, $pd_len, $sync_word, $baseline)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
@@ -16,18 +16,34 @@
     <type>int</type>
   </param>
   <param>
+    <name>Index</name>
+    <key>index</key>
+    <type>int</type>
+  </param>
+  <param>
     <name>FFT Size</name>
     <key>fft_size</key>
     <type>int</type>
   </param>
   <param>
-    <name>Header Length</name>
-    <key>hd_len</key>
+    <name>Packet Interval</name>
+    <key>null_len</key>
     <type>int</type>
   </param>
   <param>
     <name>Payload Length</name>
     <key>pd_len</key>
+    <type>int</type>
+  </param>
+  <param>
+	<name>Sync Word</name>
+	<key>sync_word</key>
+    <value>()</value>
+    <type>raw</type>
+  </param>
+  <param>
+    <name>Blind BF</name>
+    <key>baseline</key>
     <type>int</type>
   </param>
 
@@ -37,12 +53,9 @@
        * vlen
        * optional (set to 1 for optional inputs) -->
   <sink>
-    <name>in_pkt</name>
-    <type>complex</type>
-  </sink>
-  <sink>
-    <name>in_trg</name>
-    <type>byte</type>
+    <name>phase</name>
+    <type>message</type>
+    <optional>1</optional>
   </sink>
 
   <!-- Make one 'source' node per output. Sub-nodes:
@@ -53,5 +66,6 @@
   <source>
     <name>out</name>
     <type>complex</type>
+    <vlen>$fft_size</vlen>
   </source>
 </block>

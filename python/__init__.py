@@ -31,7 +31,7 @@ except ImportError:
 	pass
 
 # import any pure python here
-from channel_estimation import channel_estimation
+
 from phase_alignment import phase_alignment
 
 

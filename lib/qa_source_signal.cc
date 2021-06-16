@@ -21,14 +21,14 @@
 
 #include <gnuradio/attributes.h>
 #include <cppunit/TestAssert.h>
-#include "qa_tx_slave_mux.h"
-#include <beamnet/tx_slave_mux.h>
+#include "qa_source_signal.h"
+#include <beamnet/source_signal.h>
 
 namespace gr {
   namespace beamnet {
 
     void
-    qa_tx_slave_mux::t1()
+    qa_source_signal::t1()
     {
       // Put test here
     }

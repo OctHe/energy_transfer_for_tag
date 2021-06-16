@@ -128,7 +128,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(528, 24)</value>
+      <value>(664, 24)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -136,11 +136,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>hd_len</value>
+      <value>pd_len</value>
     </param>
     <param>
       <key>value</key>
-      <value>1</value>
+      <value>197</value>
     </param>
   </block>
   <block>
@@ -155,7 +155,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 24)</value>
+      <value>(528, 24)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -163,11 +163,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>pd_len</value>
+      <value>pkt_interval</value>
     </param>
     <param>
       <key>value</key>
-      <value>197</value>
+      <value>1</value>
     </param>
   </block>
   <block>
@@ -252,7 +252,7 @@
     </param>
   </block>
   <block>
-    <key>beamnet_source_pkt</key>
+    <key>beamnet_source_signal</key>
     <param>
       <key>baseline</key>
       <value>0</value>
@@ -279,19 +279,82 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(408, 376)</value>
+      <value>(384, 136)</value>
     </param>
     <param>
       <key>_rotation</key>
       <value>0</value>
     </param>
     <param>
-      <key>hd_len</key>
-      <value>hd_len</value>
+      <key>id</key>
+      <value>beamnet_source_signal_0</value>
+    </param>
+    <param>
+      <key>index</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>null_len</key>
+      <value>pkt_interval</value>
+    </param>
+    <param>
+      <key>pd_len</key>
+      <value>pd_len</value>
+    </param>
+    <param>
+      <key>sync_word</key>
+      <value>sync_word</value>
+    </param>
+    <param>
+      <key>tx</key>
+      <value>2</value>
+    </param>
+  </block>
+  <block>
+    <key>beamnet_source_signal</key>
+    <param>
+      <key>baseline</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fft_size</key>
+      <value>fft_size</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(376, 360)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
     </param>
     <param>
       <key>id</key>
-      <value>beamnet_source_pkt_0</value>
+      <value>beamnet_source_signal_1</value>
     </param>
     <param>
       <key>index</key>
@@ -306,71 +369,8 @@
       <value>0</value>
     </param>
     <param>
-      <key>pd_len</key>
-      <value>pd_len</value>
-    </param>
-    <param>
-      <key>sync_word</key>
-      <value>sync_word</value>
-    </param>
-    <param>
-      <key>tx</key>
-      <value>tx</value>
-    </param>
-  </block>
-  <block>
-    <key>beamnet_source_pkt</key>
-    <param>
-      <key>baseline</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>fft_size</key>
-      <value>fft_size</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(408, 136)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>hd_len</key>
-      <value>hd_len</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>beamnet_source_pkt_0_0</value>
-    </param>
-    <param>
-      <key>index</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
+      <key>null_len</key>
+      <value>pkt_interval</value>
     </param>
     <param>
       <key>pd_len</key>
@@ -382,7 +382,7 @@
     </param>
     <param>
       <key>tx</key>
-      <value>tx</value>
+      <value>2</value>
     </param>
   </block>
   <block>
@@ -409,7 +409,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>/home/shiyue_deep/Projects/BeamNet/gr-beamnet/apps/debug_master_signal.bin</value>
+      <value>/home/shiyue_deep/Projects/gr-beamnet/apps/debug_source_signal_tx0.bin</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -460,7 +460,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>/home/shiyue_deep/Projects/BeamNet/gr-beamnet/apps/debug_slave_signal.bin</value>
+      <value>/home/shiyue_deep/Projects/gr-beamnet/apps/debug_source_signal_tx1.bin</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -648,7 +648,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(96, 388)</value>
+      <value>(136, 372)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -692,7 +692,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>0, 0.5</value>
+      <value>0, 0.0</value>
     </param>
   </block>
   <block>
@@ -822,14 +822,14 @@
     </param>
   </block>
   <connection>
-    <source_block_id>beamnet_source_pkt_0</source_block_id>
-    <sink_block_id>blocks_throttle_0_0</sink_block_id>
+    <source_block_id>beamnet_source_signal_0</source_block_id>
+    <sink_block_id>blocks_throttle_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>beamnet_source_pkt_0_0</source_block_id>
-    <sink_block_id>blocks_throttle_0</sink_block_id>
+    <source_block_id>beamnet_source_signal_1</source_block_id>
+    <sink_block_id>blocks_throttle_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -847,7 +847,7 @@
   </connection>
   <connection>
     <source_block_id>qtgui_edit_box_msg_0</source_block_id>
-    <sink_block_id>beamnet_source_pkt_0</sink_block_id>
+    <sink_block_id>beamnet_source_signal_1</sink_block_id>
     <source_key>msg</source_key>
     <sink_key>phase</sink_key>
   </connection>

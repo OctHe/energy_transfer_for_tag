@@ -37,9 +37,9 @@ namespace gr {
         int d_pkt_index;
         float d_peak;
 
-        int d_rx_state;
-
         float d_thr;
+
+        int d_rx_state;
 
      public:
       packet_extraction_impl(float samp_rate, int fft_size, int pkt_size, float thr);
@@ -52,6 +52,14 @@ namespace gr {
            gr_vector_int &ninput_items,
            gr_vector_const_void_star &input_items,
            gr_vector_void_star &output_items);
+    };
+
+    enum rx_sync_states_t {
+        STATE_RX_NULL,
+        STATE_RX_ED,    // Energy detection
+        STATE_RX_DETECTED,
+        STATE_RX_PKT,
+        STATE_RX_SKIP
     };
 
   } // namespace beamnet

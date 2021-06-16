@@ -28,15 +28,13 @@
 
 #include "qa_beamnet.h"
 
-#include "qa_correlation_detector.h"
-
 
 #include "qa_energy_detector.h"
 #include "qa_symbol_sync.h"
 #include "qa_packet_extraction.h"
-#include "qa_packet_trigger.h"
-#include "qa_source_pkt.h"
-#include "qa_tx_slave_mux.h"
+
+#include "qa_source_signal.h"
+
 #include "qa_packet_demux.h"
 
 CppUnit::TestSuite *
@@ -44,14 +42,12 @@ qa_beamnet::suite()
 {
   CppUnit::TestSuite *s = new CppUnit::TestSuite("beamnet");
 
-  s->addTest(gr::beamnet::qa_correlation_detector::suite());
-
   s->addTest(gr::beamnet::qa_energy_detector::suite());
   s->addTest(gr::beamnet::qa_symbol_sync::suite());
   s->addTest(gr::beamnet::qa_packet_extraction::suite());
-  s->addTest(gr::beamnet::qa_packet_trigger::suite());
-  s->addTest(gr::beamnet::qa_source_pkt::suite());
-  s->addTest(gr::beamnet::qa_tx_slave_mux::suite());
+
+  s->addTest(gr::beamnet::qa_source_signal::suite());
+
   s->addTest(gr::beamnet::qa_packet_demux::suite());
 
   return s;

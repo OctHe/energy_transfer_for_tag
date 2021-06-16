@@ -24,7 +24,6 @@
 
 #include <gnuradio/io_signature.h>
 #include "packet_extraction_impl.h"
-#include "rx_header.h"
 
 namespace gr {
   namespace beamnet {
@@ -89,6 +88,7 @@ namespace gr {
             case STATE_RX_NULL:
 
                 // Detect the packet (Coarse time sync)
+                // It returns immediately when the energy have been detected
                 // Output 0 item
                 for(unsigned i = 0; i < noutput_items; i++)
                 {
@@ -111,7 +111,8 @@ namespace gr {
             case STATE_RX_ED: 
                 
                 // Find the start of the packet (Fine time sync)
-                // Output 0 item
+                // It find the peak in the following d_pkt_size buffer and outputs 0 item
+                // If tag cannot detect the SYNC_WORD, we ignore the first frame when the tag is activated
                 for(unsigned i = 0; i < noutput_items; i++)
                 {
                     if(in_ss[i] > d_peak)
@@ -122,7 +123,7 @@ namespace gr {
 
                     d_offset ++;
 
-                    if(d_offset == (d_pkt_size + d_fft_size))
+                    if(d_offset == d_pkt_size)
                     {
                         d_offset = 0;
 
@@ -139,6 +140,7 @@ namespace gr {
 
             case STATE_RX_DETECTED:
 
+                // Output 0 item until the first sample of the frame
                 for(unsigned i = 0; i < noutput_items; i++)
                 {
                     d_pkt_index --;
