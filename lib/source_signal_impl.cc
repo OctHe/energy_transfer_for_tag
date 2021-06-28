@@ -32,29 +32,37 @@ namespace gr {
   namespace beamnet {
 
     source_signal::sptr
-    source_signal::make(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline)
+    source_signal::make(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int mode)
     {
       return gnuradio::get_initial_sptr
-        (new source_signal_impl(tx, index, fft_size, hd_len, pd_len, sync_word, baseline));
+        (new source_signal_impl(tx, index, fft_size, hd_len, pd_len, sync_word, mode));
     }
 
     /*
      * The private constructor
      */
-    source_signal_impl::source_signal_impl(int tx, int index, int fft_size, int null_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline)
+    source_signal_impl::source_signal_impl(int tx, int index, int fft_size, int sym_sync, int sym_pd, const std::vector<gr_complex> &sync_word, int mode)
       : gr::sync_block("source_signal",
               gr::io_signature::make(0, 0, 0),
               gr::io_signature::make(1, 1, sizeof(gr_complex) * fft_size)),
       d_tx(tx),
       d_fft_size(fft_size),
-      d_null_len(null_len),
-      d_pd_len(pd_len),
+      d_sym_sync(sym_sync),
+      d_sym_pd(sym_pd),
       d_sync_word(sync_word),
-      d_tx_state(STATE_TX_NULL),
+      d_tx_state(STATE_TX_SYNC),
       d_pd_state(STATE_TX_PD_CS),
-      d_baseline(baseline)
+      d_mode(mode)
     {
+        // SYNC WORD (Normalization)
+        gr_complex sync_word_en_c;
+        float sync_word_en;
+        volk_32fc_x2_conjugate_dot_prod_32fc(&sync_word_en_c, sync_word.data(), sync_word.data(), sync_word.size());
+        volk_32fc_deinterleave_real_32f(&sync_word_en, &sync_word_en_c, 1);
+        for(int i = 0; i < fft_size; i++)
+            d_sync_word[i] = sync_word[i] / std::sqrt(sync_word_en);
 
+        // CE_WORD
         if(tx == 4)
             d_ce_word = {
                 {gr_complex(1, 0), gr_complex(1, 0), gr_complex(1, 0), gr_complex(1, 0)},
@@ -74,11 +82,11 @@ namespace gr {
         else
             throw std::runtime_error("The number of TXs must be {1, 2, 4}");
 
-       d_weight = gr_complex(1, 0);
-       d_index = index % tx;
+       d_weight = gr_complex(1, 0);     // Beamforming weight
+       d_index = index % tx;            // TX index
+       d_sym_offset = 0;
 
-       d_offset = 0;
-
+       // Message port
        message_port_register_in(pmt::mp("phase"));
        set_msg_handler(pmt::mp("phase"), boost::bind(&source_signal_impl::phase_msg, this, _1));
 
@@ -95,7 +103,8 @@ namespace gr {
         phase = pmt::f32vector_ref(pmt::cdr(msg), d_index);
         d_weight = gr_expj(TWO_PI * phase);
 
-        d_pd_state = STATE_TX_PD_BF;
+        if(d_mode & MODE_BF)
+            d_pd_state = STATE_TX_PD_BF;
 
     }
 
@@ -113,8 +122,8 @@ namespace gr {
     {
       gr_complex *out = (gr_complex *) output_items[0];
 
-      // Signal from slave source
-      int DATA_INDEX = d_fft_size / 2 +1; // The carrier index of the data (d_fft_size/2 is the DC carrier)
+      int DC_INDEX = d_fft_size / 2;
+      int BASIC_INDEX = DC_INDEX +1; 
       std::vector<gr_complex> ce_signal(d_fft_size, 0); 
       size_t block_size = output_signature()->sizeof_stream_item (0);
 
@@ -123,45 +132,35 @@ namespace gr {
        switch(d_tx_state)
        {
 
-            case STATE_TX_NULL:
-
-                memset(out, 0, block_size);
-
-                out += d_fft_size;
-                d_offset ++;
-
-                if(d_offset == d_null_len)
-                {
-                    d_offset = 0;
-                    d_tx_state = STATE_TX_SYNC;
-                }
-                break;
-
             case STATE_TX_SYNC:
 
                 memcpy(out, d_sync_word.data(), block_size);
 
+                // volk_32fc_s32fc_multiply_32fc(out, out, d_weight, d_fft_size);
+                
                 out += d_fft_size;
-                d_offset ++;
+                d_sym_offset ++;
 
-                if(d_offset == 1) // The length of SYNC_WORD is d_fft_size
+                if(d_sym_offset == d_sym_sync)       // The length of SYNC_WORD is d_fft_size
                 {
-                    d_offset = 0;
+                    d_sym_offset = 0;
                     d_tx_state = STATE_TX_CE;
                 }
                 break;
 
             case STATE_TX_CE:
 
-                ce_signal[DATA_INDEX] = d_ce_word[d_index][d_offset];
+                ce_signal[BASIC_INDEX] = d_ce_word[d_index][d_sym_offset];
                 memcpy(out, ce_signal.data(), block_size);
 
-                out += d_fft_size;
-                d_offset ++;
+                // volk_32fc_s32fc_multiply_32fc(out, out, d_weight, d_fft_size);
 
-                if(d_offset == d_tx)
+                out += d_fft_size;
+                d_sym_offset ++;
+
+                if(d_sym_offset == d_tx)
                 {
-                    d_offset = 0;
+                    d_sym_offset = 0;
                     d_tx_state = STATE_TX_PD;
                 }
 
@@ -173,27 +172,27 @@ namespace gr {
                     case STATE_TX_PD_CS:
                         
                         memset(out, 0, block_size);
-                        if(d_baseline)
-                            out[DATA_INDEX] = 1;
-                        else
-                            out[DATA_INDEX + d_index] = 1;
+                        if(d_mode & MODE_DOF_SIG)  // Cold start with distributed Orthogonal Frequency (DOF) signal
+                            out[BASIC_INDEX + d_index] = 1;
+                        else                    // Single-tone signal
+                            out[BASIC_INDEX] = 1;
+
                         volk_32fc_s32fc_multiply_32fc(out, out, d_weight, d_fft_size);
                         
                         out += d_fft_size;
-                        d_offset ++;
+                        d_sym_offset ++;
                         
                         break;
 
                     case STATE_TX_PD_BF:
 
                         memset(out, 0, block_size);
-                        out[DATA_INDEX] = 1;
+                        out[BASIC_INDEX] = 1;
 
-                        if(!d_baseline)
-                            volk_32fc_s32fc_multiply_32fc(out, out, d_weight, d_fft_size);
+                        volk_32fc_s32fc_multiply_32fc(out, out, d_weight, d_fft_size);
 
                         out += d_fft_size;
-                        d_offset ++;
+                        d_sym_offset ++;
 
                         break;
 
@@ -202,10 +201,10 @@ namespace gr {
                         break;
                 }
 
-                if(d_offset == d_pd_len)
+                if(d_sym_offset == d_sym_pd)
                 {
-                    d_offset = 0;
-                    d_tx_state = STATE_TX_NULL;
+                    d_sym_offset = 0;
+                    d_tx_state = STATE_TX_SYNC;
                 }
                 break;
 

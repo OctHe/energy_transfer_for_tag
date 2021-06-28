@@ -13,7 +13,6 @@ power_opt = 0;
 power_now_mat = zeros(Nloop, 1);
 
 rx_power_max = sum(abs(H), 2).^2;
-% rx_power_norm = diag(H * H');
 
 % Iteration loop
 for ite_index = 1: Nloop

@@ -27,24 +27,32 @@ class phase_alignment(gr.sync_block):
     """
     docstring for block phase_alignment
     """
-    def __init__(self, tx, tag):
+    def __init__(self, fft_size, tx, tag, Nloop):
         gr.sync_block.__init__(self,
             name="phase_alignment",
             in_sig=None,
             out_sig=None)
 
+        self.fft_size = fft_size
         self.tx = tx
         self.tag = tag
+        self.ite_loop = Nloop
 
         # Inverse of the ce_word matrix
-        if tx == 2:
-            self.ce_word_inv = np.array([[1./2, 1./2], [1./2, -1./2]])
+        if tx == 1:
+            self.ce_word_inv = np.array([1]);
+        elif tx == 2:
+            self.ce_word_inv = np.array([[0.5, 0.5], [0.5, -0.5]])
         elif tx == 4:
-            pass
+            self.ce_word_inv = np.array([
+                [0.5, 0.5, 0.5, 0.5],
+                [0.5, -0.5j, -0.5, 0.5j],
+                [0.5, -0.5, 0.5, -0.5],
+                [0.5, 0.5j, -0.5, -0.5j]
+                ])
 
-        self.ce_word_rx = np.zeros([tag, tx], dtype = complex)
-        self.ch = np.zeros([tag, tx], dtype = complex)
-        self.phase = np.zeros([tx, 1], dtype = float)
+        self.ch_list = np.zeros([tag, tx], dtype=complex)
+        self.phase = np.zeros([tx, 1], dtype=float)
 
         self.pkt_num = 0
 
@@ -53,77 +61,112 @@ class phase_alignment(gr.sync_block):
         self.set_msg_handler(pmt.intern('ce'), self.ce_and_pa)
 
     def ce_and_pa(self, msg):
+        """TODO: Docstring for function.
+
+        :arg1: TODO
+        :returns: TODO
+
+        """
+
+        dc_index = self.fft_size / 2
+        DATA_INDEX = dc_index + 1
 
         # Packet counter
         self.pkt_num = self.pkt_num + 1
 
-        if(self.pkt_num <= self.tag):
+        # Sync word processing
+        ce_word_sig = np.zeros([self.tx * self.fft_size, 1], dtype=complex)
+        ce_word_rx = np.zeros(self.tx, dtype=complex)
 
-            # Channel collection
+        for sig_index in range(self.tx * self.fft_size):
+            ce_word_sig[sig_index] = pmt.to_complex(pmt.vector_ref(pmt.cdr(msg), sig_index))
+        ce_word_sig_reshape = np.reshape(ce_word_sig, newshape=[self.fft_size, self.tx], order='F')
+
+        ce_word_sig_reshape = np.fft.fft(ce_word_sig_reshape, n=self.fft_size, axis=0)
+        ce_word_sig_reshape = np.fft.fftshift(ce_word_sig_reshape, axes=(0, ))
+
+        for tx_index in range(self.tx):
+            ce_word_rx[tx_index] = ce_word_sig_reshape[DATA_INDEX][tx_index]
+
+        # Channel collection and phase normalization
+        if self.pkt_num <= self.tag:
+
+            self.ch_list[self.pkt_num -1, :] = np.dot(ce_word_rx, self.ce_word_inv)
+
+            self.ch_list[self.pkt_num -1, :] = self.ch_list[self.pkt_num -1, :] \
+                    / self.ch_list[self.pkt_num -1, 0] * np.abs(self.ch_list[self.pkt_num -1, 0])
+
+            print "channel: ", self.ch_list
+
+            if self.pkt_num < self.tag:
+                return
+
+        # Channel update and phase normalization
+        if self.pkt_num > self.tag:
+
+            ch_list_index = self.pkt_num % self.tag -1
+            self.ch_list[ch_list_index, :] = np.dot(ce_word_rx, self.ce_word_inv)
+
+            self.ch_list[ch_list_index, :] = self.ch_list[ch_list_index, :] \
+                    / self.ch_list[ch_list_index, 0] * np.abs(self.ch_list[ch_list_index, 0])
+
+        # Phase alignment
+        self.phase = self.iterative_phase_alignment(self.ite_loop, 0.01)
+
+        # Print the results of 1-tag case
+        if self.tag == 1:
+            phase_1 = np.zeros([self.tx, 1], dtype=float)
             for tx_index in range(self.tx):
-                self.ce_word_rx[self.pkt_num -1][tx_index] = pmt.to_complex(pmt.vector_ref(pmt.cdr(msg), tx_index))
+                phase_1[tx_index] = - np.angle(self.ch_list[0][tx_index]) / 2 / np.pi
 
-            if(self.pkt_num == self.tag):
+            #  print "The ideal phase for the 1-tag case: ", phase_1.T
+            #  print "The result of iterative phase alignment: ", self.phase.T
 
-                # Channel estimation
-                self.ch = np.dot(self.ce_word_rx, self.ce_word_inv)
-                for tag_index in range(self.tag):
-                    self.ch[tag_index] = self.ch[tag_index] / self.ch[tag_index][0] * np.abs(self.ch[tag_index][0])
+        # Send the aligned phase using message to each power source
+        msg_vec = pmt.make_f32vector(self.tx, 0)
+        for tx_index in range(self.tx):
+            pmt.f32vector_set(msg_vec, tx_index, self.phase[tx_index][0])
 
-                # Phase alignment
-                self.phase = self.iterative_phase_alignment(1000, 0.01)
-
-                #  Phase alignment for 1 tag
-                if(self.tag == 1):
-                    phase_1 = np.zeros([self.tx, 1], dtype = float)
-                    for tx_index in range(self.tx):
-                        phase_1[tx_index] = - np.angle(self.ch[0][tx_index]) / 2 / np.pi
-
-                    print("The ideal phase for the 1-tag case: ")
-                    print(phase_1)
-                    print("The result of iterative phase alignment: ")
-                    print(self.phase)
-
-                # Message passing
-                msg_vec = pmt.make_f32vector(self.tx, 0)
-                for tx_index in range(self.tx):
-                    pmt.f32vector_set(msg_vec, tx_index, self.phase[tx_index][0])
-
-                msg_pair = pmt.cons(pmt.make_dict(), msg_vec)
-                self.message_port_pub(pmt.intern("phase"), msg_pair)
-
-        else:
-
-            # Channel update
-            pass
-            # Phase alignment
-
-            # Message passing
+        msg_pair = pmt.cons(pmt.make_dict(), msg_vec)
+        self.message_port_pub(pmt.intern("phase"), msg_pair)
 
 
-    def iterative_phase_alignment(self, Nloop, Ndelta):
+    def iterative_phase_alignment(self, ite_loop, delta_phase_base):
+        """TODO: Docstring for function.
 
-        phase_now = np.zeros([self.tx, 1], dtype = float)
-        phase_max = np.zeros([self.tx, 1], dtype = float)
-        power_max = 0
+        :arg1: TODO
+        :returns: TODO
 
-        for ite_index in range(Nloop):
+        """
+
+        phase_now = np.zeros([self.tx, 1], dtype=float)
+        phase_opt = np.zeros([self.tx, 1], dtype=float)
+        power_opt = 0
+
+        power_max = np.sum(np.abs(self.ch_list), axis=1)**2
+
+        print "The maximum power: ", power_max
+
+        for ite_index in range(ite_loop):
 
             # Generate random phase
-            phase_delta = Ndelta * np.random.rand(self.tx, 1)
-            phase_now = phase_now + phase_delta
+            delta_phase = delta_phase_base * np.random.rand(self.tx, 1)
+            phase_now = phase_now + delta_phase
 
-            bf_weight = np.exp(1j * 2 * np.pi * phase_now)
-            
+            bf_weight = np.exp(2j * np.pi * phase_now)
+
             # Power comparison
-            power_now = np.min(np.abs(np.dot(self.ch, bf_weight))**2)
+            rx_power = np.abs(np.dot(self.ch_list, bf_weight))**2
+            relative_power = rx_power / power_max
+            power_now = np.min(relative_power)
 
-            if power_now > power_max:
-                power_max = power_now
-                phase_max = phase_now
+            if power_now > power_opt:
+                power_opt = power_now
+                phase_opt = phase_now
             else:
-                phase_now = phase_max
+                phase_now = phase_opt
 
+        # Normalization
         phase_now = phase_now - phase_now[0]
 
         return phase_now

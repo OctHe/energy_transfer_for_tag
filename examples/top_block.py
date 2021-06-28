@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Wed Jun 16 20:50:17 2021
+# Generated: Sun Jun 27 20:02:54 2021
 ##################################################
 
 from distutils.version import StrictVersion
@@ -18,16 +18,20 @@ if __name__ == '__main__':
         except:
             print "Warning: failed to XInitThreads()"
 
+from PyQt5 import Qt
 from PyQt5 import Qt, QtCore
 from gnuradio import blocks
 from gnuradio import eng_notation
+from gnuradio import fft
 from gnuradio import gr
+from gnuradio import qtgui
 from gnuradio.eng_option import eng_option
+from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import beamnet
 import numpy as np
-import pmt
+import sip
 import sys
 from gnuradio import qtgui
 
@@ -63,45 +67,107 @@ class top_block(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.tx = tx = 2
-        self.pkt_interval = pkt_interval = 1
-        self.pd_len = pd_len = 197
+        self.sym_sync = sym_sync = 4
+        self.sym_pd = sym_pd = 194
         self.fft_size = fft_size = 16
-        self.thr = thr = 1e-7
-        self.sync_word = sync_word = [0, 0, 0, 0, 1, -1, -1, 1, 0, 1, -1, -1, 1, 0, 0, 0]
+        self.work_mode = work_mode = 2
+        self.sync_word = sync_word = (0, 0, -0.7485-0.6631j, 0.8855+0.4647j, 0.5681-0.8230j, 0.8855-0.4647j, -0.3546+0.9350j, 1, 0, -0.3546+0.9350j, 0.8855-0.4647j, 0.5681-0.8230j, 0.8855+0.4647j, -0.7485-0.6631j, -0.9709+0.2393j, 0)
         self.samp_rate = samp_rate = 1e6
-        self.pkt_size = pkt_size = fft_size * (1 + tx + pd_len)
-        self.interval_size = interval_size = pkt_interval * fft_size
+        self.pkt_size = pkt_size = fft_size * (sym_sync + tx + sym_pd)
 
         ##################################################
         # Blocks
         ##################################################
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_tag_reflection.bin', False)
-        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
-        self.blocks_file_sink_2 = blocks.file_sink(gr.sizeof_gr_complex*1, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_tag_pkt.bin', False)
+        self.reverse_fft_vxx_1_0 = fft.fft_vcc(fft_size, False, (()), True, 1)
+        self.reverse_fft_vxx_1 = fft.fft_vcc(fft_size, False, (()), True, 1)
+        self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
+        	1024, #size
+        	samp_rate, #samp_rate
+        	"", #name
+        	1 #number of inputs
+        )
+        self.qtgui_time_sink_x_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0.enable_tags(-1, True)
+        self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0.enable_grid(False)
+        self.qtgui_time_sink_x_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0.enable_stem_plot(False)
+
+        if not True:
+          self.qtgui_time_sink_x_0.disable_legend()
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        widths = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        colors = ["blue", "red", "green", "black", "cyan",
+                  "magenta", "yellow", "dark red", "dark green", "blue"]
+        styles = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+                   -1, -1, -1, -1, -1]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+
+        for i in xrange(2):
+            if len(labels[i]) == 0:
+                if(i % 2 == 0):
+                    self.qtgui_time_sink_x_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
+                else:
+                    self.qtgui_time_sink_x_0.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+            else:
+                self.qtgui_time_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
+        self.qtgui_edit_box_msg_0 = qtgui.edit_box_msg(qtgui.FLOAT_VEC, '0, 0.2', '', True, True, '()')
+        self._qtgui_edit_box_msg_0_win = sip.wrapinstance(self.qtgui_edit_box_msg_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_edit_box_msg_0_win)
+        self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
+        self.blocks_throttle_0_0 = blocks.throttle(gr.sizeof_gr_complex*fft_size, samp_rate,True)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*fft_size, samp_rate,True)
+        self.blocks_file_sink_3 = blocks.file_sink(gr.sizeof_float*1, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_source_corr.bin', False)
+        self.blocks_file_sink_3.set_unbuffered(False)
+        self.blocks_file_sink_2 = blocks.file_sink(gr.sizeof_float*1, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_source_nrg.bin', False)
         self.blocks_file_sink_2.set_unbuffered(False)
-        self.blocks_file_sink_1 = blocks.file_sink(gr.sizeof_float*1, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_sync_symbol.bin', False)
+        self.blocks_file_sink_1 = blocks.file_sink(gr.sizeof_gr_complex*fft_size, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_source_signal_tx1.bin', False)
         self.blocks_file_sink_1.set_unbuffered(False)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_float*1, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_sync_nrg.bin', False)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*fft_size, '/home/shiyue_deep/Projects/gr-beamnet/apps/debug_source_signal_tx0.bin', False)
         self.blocks_file_sink_0.set_unbuffered(False)
-        self.beamnet_symbol_sync_0 = beamnet.symbol_sync(fft_size, np.fft.ifft(np.fft.fftshift(sync_word)))
-        self.beamnet_packet_extraction_0 = beamnet.packet_extraction(samp_rate, fft_size, pkt_size + interval_size, thr)
-        self.beamnet_energy_detector_0 = beamnet.energy_detector(fft_size)
+        self.beamnet_symbol_sync_0 = beamnet.symbol_sync(sym_sync, np.fft.ifft(np.fft.fftshift(sync_word)))
+        self.beamnet_source_signal_1 = beamnet.source_signal(2, 1, fft_size, sym_sync, sym_pd, sync_word, work_mode)
+        self.beamnet_source_signal_0 = beamnet.source_signal(2, 0, fft_size, sym_sync, sym_pd, sync_word, work_mode)
+        self.beamnet_energy_detector_0 = beamnet.energy_detector(160)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.beamnet_energy_detector_0, 0), (self.beamnet_packet_extraction_0, 1))
-        self.connect((self.beamnet_energy_detector_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.beamnet_packet_extraction_0, 0), (self.blocks_file_sink_2, 0))
-        self.connect((self.beamnet_symbol_sync_0, 0), (self.beamnet_packet_extraction_0, 2))
-        self.connect((self.beamnet_symbol_sync_0, 0), (self.blocks_file_sink_1, 0))
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.beamnet_energy_detector_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.beamnet_packet_extraction_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.beamnet_symbol_sync_0, 0))
+        self.msg_connect((self.qtgui_edit_box_msg_0, 'msg'), (self.beamnet_source_signal_1, 'phase'))
+        self.connect((self.beamnet_energy_detector_0, 0), (self.blocks_file_sink_2, 0))
+        self.connect((self.beamnet_source_signal_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.beamnet_source_signal_1, 0), (self.blocks_throttle_0_0, 0))
+        self.connect((self.beamnet_symbol_sync_0, 0), (self.blocks_file_sink_3, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.reverse_fft_vxx_1, 0))
+        self.connect((self.blocks_throttle_0_0, 0), (self.reverse_fft_vxx_1_0, 0))
+        self.connect((self.blocks_vector_to_stream_0, 0), (self.beamnet_energy_detector_0, 0))
+        self.connect((self.blocks_vector_to_stream_0, 0), (self.beamnet_symbol_sync_0, 0))
+        self.connect((self.blocks_vector_to_stream_0, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.reverse_fft_vxx_1, 0), (self.blocks_file_sink_0, 0))
+        self.connect((self.reverse_fft_vxx_1, 0), (self.blocks_vector_to_stream_0, 0))
+        self.connect((self.reverse_fft_vxx_1_0, 0), (self.blocks_file_sink_1, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
@@ -113,35 +179,34 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_tx(self, tx):
         self.tx = tx
-        self.set_pkt_size(self.fft_size * (1 + self.tx + self.pd_len))
+        self.set_pkt_size(self.fft_size * (self.sym_sync + self.tx + self.sym_pd))
 
-    def get_pkt_interval(self):
-        return self.pkt_interval
+    def get_sym_sync(self):
+        return self.sym_sync
 
-    def set_pkt_interval(self, pkt_interval):
-        self.pkt_interval = pkt_interval
-        self.set_interval_size(self.pkt_interval * self.fft_size)
+    def set_sym_sync(self, sym_sync):
+        self.sym_sync = sym_sync
+        self.set_pkt_size(self.fft_size * (self.sym_sync + self.tx + self.sym_pd))
 
-    def get_pd_len(self):
-        return self.pd_len
+    def get_sym_pd(self):
+        return self.sym_pd
 
-    def set_pd_len(self, pd_len):
-        self.pd_len = pd_len
-        self.set_pkt_size(self.fft_size * (1 + self.tx + self.pd_len))
+    def set_sym_pd(self, sym_pd):
+        self.sym_pd = sym_pd
+        self.set_pkt_size(self.fft_size * (self.sym_sync + self.tx + self.sym_pd))
 
     def get_fft_size(self):
         return self.fft_size
 
     def set_fft_size(self, fft_size):
         self.fft_size = fft_size
-        self.set_pkt_size(self.fft_size * (1 + self.tx + self.pd_len))
-        self.set_interval_size(self.pkt_interval * self.fft_size)
+        self.set_pkt_size(self.fft_size * (self.sym_sync + self.tx + self.sym_pd))
 
-    def get_thr(self):
-        return self.thr
+    def get_work_mode(self):
+        return self.work_mode
 
-    def set_thr(self, thr):
-        self.thr = thr
+    def set_work_mode(self, work_mode):
+        self.work_mode = work_mode
 
     def get_sync_word(self):
         return self.sync_word
@@ -154,6 +219,8 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
+        self.blocks_throttle_0_0.set_sample_rate(self.samp_rate)
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
 
     def get_pkt_size(self):
@@ -161,12 +228,6 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_pkt_size(self, pkt_size):
         self.pkt_size = pkt_size
-
-    def get_interval_size(self):
-        return self.interval_size
-
-    def set_interval_size(self, interval_size):
-        self.interval_size = interval_size
 
 
 def main(top_block_cls=top_block, options=None):

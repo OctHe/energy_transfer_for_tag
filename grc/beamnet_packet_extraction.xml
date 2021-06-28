@@ -4,7 +4,7 @@
   <key>beamnet_packet_extraction</key>
   <category>[beamnet]</category>
   <import>import beamnet</import>
-  <make>beamnet.packet_extraction($samp_rate, $fft_size, $pkt_size, $thr)</make>
+  <make>beamnet.packet_extraction($samp_rate, $fft_size, $sym_pkt, $detect_size, $thr, $inr)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
@@ -21,13 +21,23 @@
     <type>int</type>
   </param>
   <param>
-    <name>Packet Size</name>
-    <key>pkt_size</key>
+    <name>Symbol</name>
+    <key>sym_pkt</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Detection Buffer</name>
+    <key>detect_size</key>
     <type>int</type>
   </param>
   <param>
     <name>Threshold</name>
     <key>thr</key>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Packet Interval</name>
+    <key>inr</key>
     <type>float</type>
   </param>
 
@@ -57,6 +67,7 @@
   <source>
     <name>out</name>
     <type>complex</type>
+    <vlen>fft_size</vlen>
     <optional>1</optional>
   </source>
 </block>

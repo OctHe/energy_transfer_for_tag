@@ -4,7 +4,7 @@
   <key>beamnet_packet_demux</key>
   <category>[beamnet]</category>
   <import>import beamnet</import>
-  <make>beamnet.packet_demux($tx, $fft_size, $hd_len, $pd_len)</make>
+  <make>beamnet.packet_demux($tx, $fft_size, $sym_sync, $sym_pd)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
@@ -21,13 +21,13 @@
     <type>int</type>
   </param>
   <param>
-    <name>Header Length</name>
-    <key>hd_len</key>
+    <name>Symbol of Sync Word</name>
+    <key>sym_sync</key>
     <type>int</type>
   </param>
   <param>
-    <name>Payload Length</name>
-    <key>pd_len</key>
+    <name>Symbol of Payload</name>
+    <key>sym_pd</key>
     <type>int</type>
   </param>
 

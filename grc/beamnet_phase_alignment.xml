@@ -4,12 +4,17 @@
   <key>beamnet_phase_alignment</key>
   <category>[beamnet]</category>
   <import>import beamnet</import>
-  <make>beamnet.phase_alignment($tx, $tag)</make>
+  <make>beamnet.phase_alignment($fft_size, $tx, $tag, $Nloop)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
+  <param>
+    <name>FFT Size</name>
+    <key>fft_size</key>
+    <type>int</type>
+  </param>
   <param>
     <name>TX Number</name>
     <key>tx</key>
@@ -18,6 +23,11 @@
   <param>
     <name>Tag number</name>
     <key>tag</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Iteration</name>
+    <key>Nloop</key>
     <type>int</type>
   </param>
 

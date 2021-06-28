@@ -25,35 +25,34 @@
 #include <gnuradio/io_signature.h>
 #include "packet_demux_impl.h"
 #include <volk/volk.h>
-#include "rx_header.h"
 
 namespace gr {
   namespace beamnet {
 
     packet_demux::sptr
-    packet_demux::make(int tx, int fft_size, int hd_len, int pd_len)
+    packet_demux::make(int tx, int fft_size, int sym_sync, int sym_pd)
     {
       return gnuradio::get_initial_sptr
-        (new packet_demux_impl(tx, fft_size, hd_len, pd_len));
+        (new packet_demux_impl(tx, fft_size, sym_sync, sym_pd));
     }
 
     /*
      * The private constructor
      */
-    packet_demux_impl::packet_demux_impl(int tx, int fft_size, int hd_len, int pd_len)
+    packet_demux_impl::packet_demux_impl(int tx, int fft_size, int sym_sync, int sym_pd)
       : gr::sync_block("packet_demux",
               gr::io_signature::make(1, 1, sizeof(gr_complex) * fft_size),
               gr::io_signature::make(0, 0, 0)),
         d_tx(tx),
         d_fft_size(fft_size),
-        d_hd_len(hd_len),
-        d_pd_len(pd_len),
+        d_sym_sync(sym_sync),
+        d_sym_pd(sym_pd),
         d_rx_state(STATE_RX_SYNC)
     {
-        d_offset = 0;
+        d_sym_offset = 0;
         d_nrg = 0;
 
-        d_ce_word.resize(tx);
+        d_ce_word.resize(d_fft_size * tx);
 
         message_port_register_out(pmt::mp("ce"));
     }
@@ -74,22 +73,21 @@ namespace gr {
 
       float nrg[noutput_items * d_fft_size];
 
-      int DATA_INDEX = 9; // The carrier index of the data (8 is DC value)
-
       // Demux the packet
-        volk_32fc_magnitude_squared_32f(nrg, in, noutput_items * d_fft_size);
+      volk_32fc_magnitude_squared_32f(nrg, in, noutput_items * d_fft_size);
 
-        for(int i = 0; i < noutput_items; i++)
+        for(unsigned i = 0; i < noutput_items; i++)
         {
             switch(d_rx_state)
             {
                 case STATE_RX_SYNC:
 
-                    d_offset ++;
+                    d_sym_offset ++;
 
-                    if(d_offset == d_hd_len)
+                    if(d_sym_offset == d_sym_sync)
                     {
-                        d_offset = 0;
+
+                        d_sym_offset = 0;
                         d_rx_state = STATE_RX_CE;
                     }
 
@@ -97,25 +95,23 @@ namespace gr {
                     
                 case STATE_RX_CE:
 
-                    d_ce_word[d_offset % d_tx] += in[i * d_fft_size + DATA_INDEX];
-                    d_offset ++;
+                    for(unsigned j = 0; j < d_fft_size; j++)
+                        d_ce_word[d_sym_offset * d_fft_size + j] = in[i * d_fft_size + j];
 
-                    if(d_offset == d_hd_len * d_tx)
+                    d_sym_offset ++;
+
+                    if(d_sym_offset == d_tx)
                     {
-                        // Message
-                        pmt::pmt_t msg_vec = pmt::make_vector(d_tx, pmt::from_complex(gr_complex(0, 0))); 
-                        for(int j = 0; j <d_tx; j++)
-                        {
-                            d_ce_word[j] /= d_hd_len;
-                            pmt::vector_set(msg_vec, j, pmt::from_complex(d_ce_word[j])); 
-                        }
+
+                        // Send the received CE_WORD to next block with message
+                        pmt::pmt_t msg_vec = pmt::make_vector(d_tx * d_fft_size, pmt::from_complex(gr_complex(0, 0)));
+                        for(unsigned j = 0; j < d_fft_size * d_tx; j++)
+                            pmt::vector_set(msg_vec, j, pmt::from_complex(d_ce_word[j]));
+
                         pmt::pmt_t msg_pair = pmt::cons(pmt::make_dict(), msg_vec);
                         message_port_pub(pmt::mp("ce"), msg_pair);
 
-                        for(int j = 0; j <d_tx; j++)
-                            d_ce_word[j] = 0;
-
-                        d_offset = 0;
+                        d_sym_offset = 0;
                         d_rx_state = STATE_RX_PD;
                     }
 
@@ -127,16 +123,18 @@ namespace gr {
                     for(unsigned j = 0; j < d_fft_size; j++)
                         d_nrg += nrg[i * d_fft_size + j];
 
-                    d_offset ++;
+                    d_sym_offset ++;
+                    // std::cout << "Symbol_offset " << d_sym_offset << std::endl;
         
-                    if(d_offset == d_pd_len)
+                    if(d_sym_offset == d_sym_pd)
                     {
+                        // std::cout << "Symbol_offset " << d_sym_offset << std::endl;
                         // Output the energy
-                        d_nrg = d_nrg / (d_pd_len * d_fft_size);
+                        d_nrg = d_nrg / (d_sym_pd * d_fft_size);
                         
-                        std::cout << "Energy: " << d_nrg << std::endl;
+                        std::cout << "Received power: " << d_nrg << std::endl;
                         
-                        d_offset = 0;
+                        d_sym_offset = 0;
                         d_rx_state = STATE_RX_SYNC;
                     }
                     break;

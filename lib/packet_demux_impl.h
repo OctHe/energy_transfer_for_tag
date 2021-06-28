@@ -26,22 +26,28 @@
 namespace gr {
   namespace beamnet {
 
+    enum rx_states_t {
+        STATE_RX_SYNC,
+        STATE_RX_CE,
+        STATE_RX_PD
+    };
+
     class packet_demux_impl : public packet_demux
     {
      private:
          int d_tx;
          int d_fft_size;
-         int d_hd_len;
-         int d_pd_len;
+         int d_sym_sync;
+         int d_sym_pd;
          int d_rx_state;
 
-         int d_offset;
+         unsigned d_sym_offset;
          float d_nrg;
 
          std::vector<gr_complex> d_ce_word;
 
      public:
-      packet_demux_impl(int tx, int fft_size, int hd_len, int pd_len);
+      packet_demux_impl(int tx, int fft_size, int sym_sync, int sym_pd);
       ~packet_demux_impl();
 
       // Where all the action really happens

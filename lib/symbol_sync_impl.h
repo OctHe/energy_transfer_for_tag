@@ -29,11 +29,12 @@ namespace gr {
     class symbol_sync_impl : public symbol_sync
     {
      private:
+         int d_sym_sync;    // The number of symbols of the SYNC WORD
+         int d_corr_len;    // The length of the correlation operation
          std::vector<gr_complex> d_sync_word;
-         int d_corr_len;
 
      public:
-      symbol_sync_impl(int fft_size, const std::vector<gr_complex> &sync_word);
+      symbol_sync_impl(int sym_sync, const std::vector<gr_complex> &sync_word);
       ~symbol_sync_impl();
 
       // Where all the action really happens

@@ -29,26 +29,30 @@ namespace gr {
   namespace beamnet {
 
     packet_extraction::sptr
-    packet_extraction::make(float samp_rate, int fft_size, int pkt_size, float thr)
+    packet_extraction::make(float samp_rate, int fft_size, int sym_pkt, int detect_size, float thr, float inr)
     {
       return gnuradio::get_initial_sptr
-        (new packet_extraction_impl(samp_rate, fft_size, pkt_size, thr));
+        (new packet_extraction_impl(samp_rate, fft_size, sym_pkt, detect_size, thr, inr));
     }
 
     /*
      * The private constructor
      */
-    packet_extraction_impl::packet_extraction_impl(float samp_rate, int fft_size, int pkt_size, float thr)
+    packet_extraction_impl::packet_extraction_impl(float samp_rate, int fft_size, int sym_pkt, int detect_size, float thr, float inr)
       : gr::block("packet_extraction",
               gr::io_signature::make3(3, 3, sizeof(gr_complex), sizeof(float), sizeof(float)),
-              gr::io_signature::make(1, 1, sizeof(gr_complex))),
+              gr::io_signature::make(1, 1, sizeof(gr_complex) * fft_size)),
+        d_samp_rate(samp_rate),
         d_fft_size(fft_size),
-        d_pkt_size(pkt_size),
+        d_detect_size(detect_size),
         d_thr(thr),
-        d_rx_state(STATE_RX_SKIP)
+        d_rx_state(STATE_RX_ED)
     {
 
-        d_skip_samp = (int) (samp_rate / 10); // Skip the samples in the following 100 ms
+        d_sym_pkt = sym_pkt;
+        d_inr_samp = samp_rate * inr; // Packet interval in samples
+
+        d_tstamp = 0;
         d_offset = 0;
         d_pkt_index = 0;
         d_peak = 0;
@@ -66,7 +70,7 @@ namespace gr {
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
       for (unsigned i = 0; i < ninput_items_required.size(); i++) 
-          ninput_items_required[i] = noutput_items;
+          ninput_items_required[i] = noutput_items * d_fft_size;
     }
 
     int
@@ -85,36 +89,43 @@ namespace gr {
 
       switch(d_rx_state)
       {
-            case STATE_RX_NULL:
+            case STATE_RX_ED:
 
                 // Detect the packet (Coarse time sync)
                 // It returns immediately when the energy have been detected
                 // Output 0 item
-                for(unsigned i = 0; i < noutput_items; i++)
+                for(unsigned i = 0; i < noutput_items * d_fft_size; i++)
                 {
-                    if(in_ed[i] >= d_thr)
+                    d_tstamp ++;
+
+                    // We ignore some samples of the received signal when the RX starts 
+                    // to avoid hardware issues
+                    if(in_ed[i] >= d_thr && d_tstamp > 1000)   
                     {
                         d_pkt_index = 0;
                         d_peak = 0;
 
-                        d_rx_state = STATE_RX_ED;
+                        d_rx_state = STATE_RX_SS;
 
-                        consume_each (i);
+                        consume_each (i+1);
                         return 0;
                         }
                     }
               
-                consume_each (noutput_items);
+                consume_each (noutput_items * d_fft_size);
                 return 0;
 
 
-            case STATE_RX_ED: 
+            case STATE_RX_SS: 
                 
                 // Find the start of the packet (Fine time sync)
-                // It find the peak in the following d_pkt_size buffer and outputs 0 item
-                // If tag cannot detect the SYNC_WORD, we ignore the first frame when the tag is activated
-                for(unsigned i = 0; i < noutput_items; i++)
+                // If tag cannot detect the SYNC_WORD, the first reflected frame when
+                // the tag is activated will be broken, and this block ignores it.
+                // Thus, it finds the peak in the following d_detect_size buffer and outputs 0 item
+                for(unsigned i = 0; i < noutput_items * d_fft_size; i++)
                 {
+                    d_tstamp ++;
+
                     if(in_ss[i] > d_peak)
                     {
                         d_pkt_index = d_offset;
@@ -123,120 +134,100 @@ namespace gr {
 
                     d_offset ++;
 
-                    if(d_offset == d_pkt_size)
+                    if(d_offset == d_detect_size)
                     {
                         d_offset = 0;
+                        if(d_detect_size >= d_sym_pkt * d_fft_size)
+                            d_pkt_index -= (d_detect_size - d_sym_pkt * d_fft_size);
+                        else
+                            throw std::runtime_error("Detection buffer cannot smaller than packet size");
+
 
                         d_rx_state = STATE_RX_DETECTED;
 
-                        consume_each (i);
+                        consume_each (i+1);
                         return 0;
                         
                     }
                 }
                 
-                consume_each (noutput_items);
+                consume_each (noutput_items * d_fft_size);
                 return 0;
 
             case STATE_RX_DETECTED:
 
-                // Output 0 item until the first sample of the frame
-                for(unsigned i = 0; i < noutput_items; i++)
+                // Output 0 item until the block gets the first sample of the next unbroken frame
+                for(unsigned i = 0; i < noutput_items * d_fft_size; i++)
                 {
+                    d_tstamp ++;
                     d_pkt_index --;
 
                     if(d_pkt_index == 0)
                     {
                         d_rx_state = STATE_RX_PKT;
 
-                        consume_each (i);
+                        consume_each (i+1);
                         return 0;
                         
                     }
                 }
 
-                consume_each (noutput_items);
+                consume_each (noutput_items * d_fft_size);
                 return 0;
 
             case STATE_RX_PKT:
-
-                for(unsigned i = 0; i < noutput_items; i++)
+                
+                for(unsigned i = 0; i < noutput_items * d_fft_size; i++)
                 {
+                    if(!d_offset)
+                        std::cout << "Timestamp: " << d_tstamp / d_samp_rate << " s" << std::endl;
+
                     out[i] = in_sig[i];
 
                     d_offset ++;
-
-                    if(d_offset == d_pkt_size)
+                    
+                    if(d_offset == d_sym_pkt * d_fft_size)
                     {
                         d_offset = 0;
-                        d_rx_state = STATE_RX_SKIP;
+                        d_rx_state = STATE_RX_INR;
 
-                        consume_each (i);
-                        return i;
+                        consume_each (i+1);
+                        return (i+1) / d_fft_size;
                         
                     }
                 }
 
-                consume_each (noutput_items);
+                consume_each (noutput_items * d_fft_size);
                 return noutput_items;
 
-            case STATE_RX_SKIP:
+            case STATE_RX_INR:
 
                 // Output 0 item
-                for(unsigned i = 0; i < noutput_items; i++)
+                for(unsigned i = 0; i < noutput_items * d_fft_size; i++)
                 {
+                    d_tstamp ++;
                     d_offset ++;
 
-                    if(d_offset == d_skip_samp)
+                    if(d_offset == d_inr_samp)
                     {
                         d_offset = 0;
-                        d_rx_state = STATE_RX_NULL;
+                        d_rx_state = STATE_RX_ED;
 
-                        consume_each (i);
+                        consume_each (i+1);
                         return 0;
                         }
                     }
               
-                consume_each (noutput_items);
+                consume_each (noutput_items * d_fft_size);
                 return 0;
+
             default:
 
                 throw std::runtime_error("invalid state");
-                break;
+
+                consume_each (noutput_items * d_fft_size);
+                return 0;
       }
-      // int extracted_pkt = 0;    // The number of extracted packet in this stream
-      // bool pkt_detected = false, sym_sync = false;
-      //
-      // // Extract the packet from the results of energy detection and symbol synchronization
-      // unsigned i = 0;
-      // while(i < noutput_items * d_pkt_size)
-      // {
-      //     if(in_ed[i] > d_thr)
-      //     {
-      //         extracted_pkt ++;
-      //
-      //         // If the packet is detected, then find the start of it in the following (d_pkt_size) samples
-      //         for(unsigned j = 1; j < d_pkt_size; j++)
-      //               i = (in_ss[i + j] > in_ss[i]) ? (i + j) : i;
-      //
-      //
-      //         // Output the following (d_pkt_size) samples, and continuously find the next packet
-      //         size_t block_size = output_signature()->sizeof_stream_item (0);
-      //         memcpy(out + (extracted_pkt -1) * d_pkt_size, in_sig + i, block_size);
-      //         i += d_pkt_size;
-      //
-      //     }
-      //     else
-      //         i++;
-      //
-      // }
-      //
-      // // Tell runtime system how many input items we consumed on
-      // // each input stream.
-      // consume_each ((i + 1) * d_pkt_size);
-      //
-      // // Tell runtime system how many output items we produced.
-      // return extracted_pkt;
     }
 
   } /* namespace beamnet */

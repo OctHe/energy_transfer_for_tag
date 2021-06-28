@@ -46,7 +46,7 @@ namespace gr {
        * class. beamnet::symbol_sync::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int fft_size, const std::vector<gr_complex> &sync_word);
+      static sptr make(int sym_sync, const std::vector<gr_complex> &sync_word);
     };
 
   } // namespace beamnet

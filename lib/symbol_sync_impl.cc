@@ -30,22 +30,33 @@ namespace gr {
   namespace beamnet {
 
     symbol_sync::sptr
-    symbol_sync::make(int fft_size, const std::vector<gr_complex> &sync_word)
+    symbol_sync::make(int sym_sync, const std::vector<gr_complex> &sync_word)
     {
       return gnuradio::get_initial_sptr
-        (new symbol_sync_impl(fft_size, sync_word));
+        (new symbol_sync_impl(sym_sync, sync_word));
     }
 
     /*
      * The private constructor
      */
-    symbol_sync_impl::symbol_sync_impl(int fft_size, const std::vector<gr_complex> &sync_word)
+    symbol_sync_impl::symbol_sync_impl(int sym_sync, const std::vector<gr_complex> &sync_word)
       : gr::block("symbol_sync",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(float))),
-        d_sync_word(sync_word)
+        d_sym_sync(sym_sync)
     {
-        d_corr_len = sync_word.size();
+        d_corr_len = sym_sync * sync_word.size();
+        for(int i = 0; i < sym_sync; i++)
+            d_sync_word.insert(d_sync_word.end(), sync_word.begin(), sync_word.end());
+
+        // Normalization of signal power
+        gr_complex sync_word_en_c;
+        float sync_word_en;
+        volk_32fc_x2_conjugate_dot_prod_32fc(&sync_word_en_c, d_sync_word.data(), d_sync_word.data(), d_sync_word.size());
+        volk_32fc_deinterleave_real_32f(&sync_word_en, &sync_word_en_c, 1);
+        for(int i = 0; i < d_sync_word.size(); i++)
+            d_sync_word[i] = d_sync_word[i] / std::sqrt(sync_word_en);
+
     }
 
     /*

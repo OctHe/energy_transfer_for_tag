@@ -46,7 +46,7 @@ namespace gr {
        * class. beamnet::source_signal::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int tx, int index, int fft_size, int hd_len, int pd_len, const std::vector<gr_complex> &sync_word, int baseline);
+      static sptr make(int tx, int index, int fft_size, int sym_sync, int sym_pd, const std::vector<gr_complex> &sync_word, int mode);
     };
 
   } // namespace beamnet

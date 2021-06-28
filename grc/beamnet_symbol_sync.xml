@@ -4,15 +4,15 @@
   <key>beamnet_symbol_sync</key>
   <category>[beamnet]</category>
   <import>import beamnet</import>
-  <make>beamnet.symbol_sync($fft_size, $sync_word)</make>
+  <make>beamnet.symbol_sync($sym_sync, $sync_word)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
 <param>
-	<name>FFT Size</name>
-	<key>fft_size</key>
+	<name>Symbol of Sync Word</name>
+	<key>sym_sync</key>
 	<type>int</type>
 </param>
 <param>

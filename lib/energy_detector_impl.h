@@ -29,10 +29,10 @@ namespace gr {
     class energy_detector_impl : public energy_detector
     {
      private:
-         int d_pkt_size;
+         int d_win_size;
 
      public:
-      energy_detector_impl(int pkt_size);
+      energy_detector_impl(int win_size);
       ~energy_detector_impl();
 
       // Where all the action really happens

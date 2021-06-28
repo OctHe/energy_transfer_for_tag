@@ -29,10 +29,15 @@ namespace gr {
     class packet_extraction_impl : public packet_extraction
     {
      private:
-        int d_skip_samp;  // Skip the samples after finishing the packet extraction
+        float d_samp_rate;
         int d_fft_size;
-        int d_pkt_size;  // Packet size in sample
+        int d_sym_pkt;          // Number of symbol in each packet
+        int d_detect_size;      // Packet detection buffer size in sample
 
+        float d_inr_samp;       // After detecting a packet, the following d_inr_samp 
+                                // is the packet interval in samples: d_inr_samp 
+                                // samples do not detect packet.
+        int d_tstamp;           // Timestamp in sample
         int d_offset;
         int d_pkt_index;
         float d_peak;
@@ -42,7 +47,7 @@ namespace gr {
         int d_rx_state;
 
      public:
-      packet_extraction_impl(float samp_rate, int fft_size, int pkt_size, float thr);
+      packet_extraction_impl(float samp_rate, int fft_size, int d_sym_pkt, int detect_size, float thr, float inr);
       ~packet_extraction_impl();
 
       // Where all the action really happens
@@ -55,11 +60,11 @@ namespace gr {
     };
 
     enum rx_sync_states_t {
-        STATE_RX_NULL,
-        STATE_RX_ED,    // Energy detection
-        STATE_RX_DETECTED,
+        STATE_RX_ED,            // Energy detection
+        STATE_RX_SS,            // Symbol sync
+        STATE_RX_DETECTED,      // Packet has been synchronized
         STATE_RX_PKT,
-        STATE_RX_SKIP
+        STATE_RX_INR            // Packet interval
     };
 
   } // namespace beamnet
