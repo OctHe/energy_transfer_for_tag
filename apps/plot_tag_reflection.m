@@ -4,8 +4,8 @@ close all;
 %% Params
 samp_rate = 1e6;
 
-read_raw_start = 0.65995e6;     % read_start < read_size
-read_raw_size = 0.6601e6;
+read_raw_start = 0e6;     % read_start < read_size
+read_raw_size = 30e6;
 
 
 %% File data
