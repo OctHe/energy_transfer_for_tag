@@ -46,31 +46,38 @@ class top_block(gr.top_block):
         self.center_freq_tx = center_freq_tx = 915e6
         self.center_freq_rx = center_freq_rx = 919e6
 
+        device_serial = ["320F337", '320F33C', '30FDE1D', '30FDE5E']
+
         ##################################################
         # Blocks
         ##################################################
 
-        self.beamnet_source_signal_3 = beamnet.source_signal(tx, 3, fft_size, sym_sync, sym_pd, sync_word, work_mode)
-        self.beamnet_source_signal_2 = beamnet.source_signal(tx, 2, fft_size, sym_sync, sym_pd, sync_word, work_mode)
-        self.beamnet_source_signal_1 = beamnet.source_signal(tx, 1, fft_size, sym_sync, sym_pd, sync_word, work_mode)
-        self.beamnet_source_signal_0 = beamnet.source_signal(tx, 0, fft_size, sym_sync, sym_pd, sync_word, work_mode)
+        # Multiple power sources
+        self.beamnet_source_signal = [beamnet.source_signal(tx, i, fft_size, sym_sync, sym_pd, sync_word, work_mode) for i in range(self.tx)]
+        #  self.beamnet_source_signal_3 = beamnet.source_signal(tx, 3, fft_size, sym_sync, sym_pd, sync_word, work_mode)
+        #  self.beamnet_source_signal_2 = beamnet.source_signal(tx, 2, fft_size, sym_sync, sym_pd, sync_word, work_mode)
+        #  self.beamnet_source_signal_1 = beamnet.source_signal(tx, 1, fft_size, sym_sync, sym_pd, sync_word, work_mode)
+        #  self.beamnet_source_signal_0 = beamnet.source_signal(tx, 0, fft_size, sym_sync, sym_pd, sync_word, work_mode)
 
-        self.reverse_fft_vxx_3 = fft.fft_vcc(fft_size, False, (()), True, 1)
-        self.reverse_fft_vxx_2 = fft.fft_vcc(fft_size, False, (()), True, 1)
-        self.reverse_fft_vxx_1 = fft.fft_vcc(fft_size, False, (()), True, 1)
-        self.reverse_fft_vxx_0 = fft.fft_vcc(fft_size, False, (()), True, 1)
+        self.reverse_fft_vxx = [fft.fft_vcc(fft_size, False, (()), True, 1) for i in range(self.tx)]
+        #  self.reverse_fft_vxx_3 = fft.fft_vcc(fft_size, False, (()), True, 1)
+        #  self.reverse_fft_vxx_2 = fft.fft_vcc(fft_size, False, (()), True, 1)
+        #  self.reverse_fft_vxx_1 = fft.fft_vcc(fft_size, False, (()), True, 1)
+        #  self.reverse_fft_vxx_0 = fft.fft_vcc(fft_size, False, (()), True, 1)
 
-        self.blocks_vector_to_stream_3 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
-        self.blocks_vector_to_stream_2 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
-        self.blocks_vector_to_stream_1 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
-        self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
+        self.blocks_vector_to_stream = [blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size) for i in range(self.tx)]
+        #  self.blocks_vector_to_stream_3 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
+        #  self.blocks_vector_to_stream_2 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
+        #  self.blocks_vector_to_stream_1 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
+        #  self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, fft_size)
+        
+        self.blocks_multiply_const_vxx = [blocks.multiply_const_vcc((sig_coeff, )) for i in range(self.tx)]
+        #  self.blocks_multiply_const_vxx_3 = blocks.multiply_const_vcc((sig_coeff, ))
+        #  self.blocks_multiply_const_vxx_2 = blocks.multiply_const_vcc((sig_coeff, ))
+        #  self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((sig_coeff, ))
+        #  self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc((sig_coeff, ))
 
-        self.blocks_multiply_const_vxx_3 = blocks.multiply_const_vcc((sig_coeff, ))
-        self.blocks_multiply_const_vxx_2 = blocks.multiply_const_vcc((sig_coeff, ))
-        self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((sig_coeff, ))
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc((sig_coeff, ))
-
-
+        # Beamforming Helper
         self.beamnet_symbol_sync_0 = beamnet.symbol_sync(sym_sync, np.fft.ifft(np.fft.fftshift(sync_word)))
         self.beamnet_energy_detector_0 = beamnet.energy_detector(win_size)
         self.beamnet_packet_extraction_0 = beamnet.packet_extraction(samp_rate, fft_size, sym_pkt, win_size + sym_pkt * fft_size, thr, 0.1)
@@ -87,12 +94,87 @@ class top_block(gr.top_block):
         self.blocks_file_sink_0.set_unbuffered(False)
 
         # USRP objects
+        self.uhd_usrp_sink = [
+                uhd.usrp_sink(
+        	",".join(("serial=" + device_serial[i], "")),
+        	uhd.stream_args(cpu_format="fc32", channels=range(1),),
+            ) for i in range(self.tx)
+            ]
+
+        for i in range(self.tx):
+            self.uhd_usrp_sink[i].set_clock_source('external', 0)
+            self.uhd_usrp_sink[i].set_time_source('external', 0)
+            self.uhd_usrp_sink[i].set_subdev_spec('A:A', 0)
+            self.uhd_usrp_sink[i].set_samp_rate(samp_rate)
+            self.uhd_usrp_sink[i].set_center_freq(center_freq_tx, 0)
+            self.uhd_usrp_sink[i].set_gain(power_gain_tx, 0)
+            self.uhd_usrp_sink[i].set_antenna('TX/RX', 0)
+            self.uhd_usrp_sink[i].set_bandwidth(samp_rate, 0)
+
+        #  self.uhd_usrp_sink_3 = uhd.usrp_sink(
+        #          ",".join(("serial" + device_serial[3], "")),
+        #          uhd.stream_args(cpu_format="fc32", channels=range(1),),
+        #  )
+        #  self.uhd_usrp_sink_3.set_clock_source('external', 0)
+        #  self.uhd_usrp_sink_3.set_time_source('external', 0)
+        #  self.uhd_usrp_sink_3.set_subdev_spec('A:A', 0)
+        #  self.uhd_usrp_sink_3.set_samp_rate(samp_rate)
+        #  self.uhd_usrp_sink_3.set_center_freq(center_freq_tx, 0)
+        #  self.uhd_usrp_sink_3.set_gain(power_gain_tx, 0)
+        #  self.uhd_usrp_sink_3.set_antenna('TX/RX', 0)
+        #  self.uhd_usrp_sink_3.set_bandwidth(samp_rate, 0)
+        #
+        #  self.uhd_usrp_sink_2 = uhd.usrp_sink(
+        #          ",".join(("serial=30FDE1D", "")),
+        #          uhd.stream_args(
+        #                  cpu_format="fc32",
+        #                  channels=range(1),
+        #          ),
+        #  )
+        #  self.uhd_usrp_sink_2.set_clock_source('external', 0)
+        #  self.uhd_usrp_sink_2.set_time_source('external', 0)
+        #  self.uhd_usrp_sink_2.set_subdev_spec('A:A', 0)
+        #  self.uhd_usrp_sink_2.set_samp_rate(samp_rate)
+        #  self.uhd_usrp_sink_2.set_center_freq(center_freq_tx, 0)
+        #  self.uhd_usrp_sink_2.set_gain(power_gain_tx, 0)
+        #  self.uhd_usrp_sink_2.set_antenna('TX/RX', 0)
+        #  self.uhd_usrp_sink_2.set_bandwidth(samp_rate, 0)
+        #
+        #  self.uhd_usrp_sink_1 = uhd.usrp_sink(
+        #          ",".join(("serial=320F33C", "")),
+        #          uhd.stream_args(
+        #                  cpu_format="fc32",
+        #                  channels=range(1),
+        #          ),
+        #  )
+        #  self.uhd_usrp_sink_1.set_clock_source('external', 0)
+        #  self.uhd_usrp_sink_1.set_time_source('external', 0)
+        #  self.uhd_usrp_sink_1.set_subdev_spec('A:A', 0)
+        #  self.uhd_usrp_sink_1.set_samp_rate(samp_rate)
+        #  self.uhd_usrp_sink_1.set_center_freq(center_freq_tx, 0)
+        #  self.uhd_usrp_sink_1.set_gain(power_gain_tx, 0)
+        #  self.uhd_usrp_sink_1.set_antenna('TX/RX', 0)
+        #  self.uhd_usrp_sink_1.set_bandwidth(samp_rate, 0)
+        #
+        #  self.uhd_usrp_sink_0 = uhd.usrp_sink(
+        #          ",".join(("serial=320F337", "")),
+        #          uhd.stream_args(
+        #                  cpu_format="fc32",
+        #                  channels=range(1),
+        #          ),
+        #  )
+        #  self.uhd_usrp_sink_0.set_clock_source('external', 0)
+        #  self.uhd_usrp_sink_0.set_time_source('external', 0)
+        #  self.uhd_usrp_sink_0.set_subdev_spec('A:A', 0)
+        #  self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
+        #  self.uhd_usrp_sink_0.set_center_freq(center_freq_tx, 0)
+        #  self.uhd_usrp_sink_0.set_gain(power_gain_tx, 0)
+        #  self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
+        #  self.uhd_usrp_sink_0.set_bandwidth(samp_rate, 0)
+
         self.uhd_usrp_source_0 = uhd.usrp_source(
-        	",".join(("serial=320F337", "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
+        	",".join(("serial=" + device_serial[0], "")),
+        	uhd.stream_args(cpu_format="fc32", channels=range(1),),
         )
         self.uhd_usrp_source_0.set_clock_source('external', 0)
         self.uhd_usrp_source_0.set_time_source('external', 0)
@@ -106,119 +188,69 @@ class top_block(gr.top_block):
         self.uhd_usrp_source_0.set_auto_dc_offset(True, 0)
         self.uhd_usrp_source_0.set_auto_iq_balance(True, 0)
 
-        self.uhd_usrp_sink_3 = uhd.usrp_sink(
-        	",".join(("serial=30FDE5E", "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
-        )
-        self.uhd_usrp_sink_3.set_clock_source('external', 0)
-        self.uhd_usrp_sink_3.set_time_source('external', 0)
-        self.uhd_usrp_sink_3.set_subdev_spec('A:A', 0)
-        self.uhd_usrp_sink_3.set_samp_rate(samp_rate)
-        self.uhd_usrp_sink_3.set_center_freq(center_freq_tx, 0)
-        self.uhd_usrp_sink_3.set_gain(power_gain_tx, 0)
-        self.uhd_usrp_sink_3.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_3.set_bandwidth(samp_rate, 0)
-        self.uhd_usrp_sink_2 = uhd.usrp_sink(
-        	",".join(("serial=30FDE1D", "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
-        )
-        self.uhd_usrp_sink_2.set_clock_source('external', 0)
-        self.uhd_usrp_sink_2.set_time_source('external', 0)
-        self.uhd_usrp_sink_2.set_subdev_spec('A:A', 0)
-        self.uhd_usrp_sink_2.set_samp_rate(samp_rate)
-        self.uhd_usrp_sink_2.set_center_freq(center_freq_tx, 0)
-        self.uhd_usrp_sink_2.set_gain(power_gain_tx, 0)
-        self.uhd_usrp_sink_2.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_2.set_bandwidth(samp_rate, 0)
-
-        self.uhd_usrp_sink_1 = uhd.usrp_sink(
-        	",".join(("serial=320F33C", "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
-        )
-        self.uhd_usrp_sink_1.set_clock_source('external', 0)
-        self.uhd_usrp_sink_1.set_time_source('external', 0)
-        self.uhd_usrp_sink_1.set_subdev_spec('A:A', 0)
-        self.uhd_usrp_sink_1.set_samp_rate(samp_rate)
-        self.uhd_usrp_sink_1.set_center_freq(center_freq_tx, 0)
-        self.uhd_usrp_sink_1.set_gain(power_gain_tx, 0)
-        self.uhd_usrp_sink_1.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_1.set_bandwidth(samp_rate, 0)
-
-        self.uhd_usrp_sink_0 = uhd.usrp_sink(
-        	",".join(("serial=320F337", "")),
-        	uhd.stream_args(
-        		cpu_format="fc32",
-        		channels=range(1),
-        	),
-        )
-        self.uhd_usrp_sink_0.set_clock_source('external', 0)
-        self.uhd_usrp_sink_0.set_time_source('external', 0)
-        self.uhd_usrp_sink_0.set_subdev_spec('A:A', 0)
-        self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_sink_0.set_center_freq(center_freq_tx, 0)
-        self.uhd_usrp_sink_0.set_gain(power_gain_tx, 0)
-        self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_0.set_bandwidth(samp_rate, 0)
-
         # Time sync with external clock source
-        self.uhd_usrp_sink_0.set_time_next_pps(uhd.time_spec(0.0))
-        self.uhd_usrp_sink_1.set_time_next_pps(uhd.time_spec(0.0))
-        self.uhd_usrp_sink_2.set_time_next_pps(uhd.time_spec(0.0))
-        self.uhd_usrp_sink_3.set_time_next_pps(uhd.time_spec(0.0))
+        for i in range(self.tx):
+            self.uhd_usrp_sink[i].set_time_next_pps(uhd.time_spec(0.0))
+        #  self.uhd_usrp_sink_0.set_time_next_pps(uhd.time_spec(0.0))
+        #  self.uhd_usrp_sink_1.set_time_next_pps(uhd.time_spec(0.0))
+        #  self.uhd_usrp_sink_2.set_time_next_pps(uhd.time_spec(0.0))
+        #  self.uhd_usrp_sink_3.set_time_next_pps(uhd.time_spec(0.0))
+
         self.uhd_usrp_source_0.set_time_next_pps(uhd.time_spec(0.0))
 
         time.sleep(1) # Wait for the PPS signal
 
-        self.uhd_usrp_sink_0.set_start_time(uhd.time_spec(3.0))
-        self.uhd_usrp_sink_1.set_start_time(uhd.time_spec(3.0))
-        self.uhd_usrp_sink_2.set_start_time(uhd.time_spec(3.0))
-        self.uhd_usrp_sink_3.set_start_time(uhd.time_spec(3.0))
+        for i in range(self.tx):
+            self.uhd_usrp_sink[i].set_start_time(uhd.time_spec(3.0))
+        #  self.uhd_usrp_sink_0.set_start_time(uhd.time_spec(3.0))
+        #  self.uhd_usrp_sink_1.set_start_time(uhd.time_spec(3.0))
+        #  self.uhd_usrp_sink_2.set_start_time(uhd.time_spec(3.0))
+        #  self.uhd_usrp_sink_3.set_start_time(uhd.time_spec(3.0))
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.beamnet_source_signal_0, 0), (self.reverse_fft_vxx_0, 0))
-        self.connect((self.beamnet_source_signal_1, 0), (self.reverse_fft_vxx_1, 0))
-        self.connect((self.beamnet_source_signal_2, 0), (self.reverse_fft_vxx_2, 0))
-        self.connect((self.beamnet_source_signal_3, 0), (self.reverse_fft_vxx_3, 0))
-        self.connect((self.reverse_fft_vxx_0, 0), (self.blocks_vector_to_stream_0, 0))
-        self.connect((self.reverse_fft_vxx_1, 0), (self.blocks_vector_to_stream_1, 0))
-        self.connect((self.reverse_fft_vxx_2, 0), (self.blocks_vector_to_stream_2, 0))
-        self.connect((self.reverse_fft_vxx_3, 0), (self.blocks_vector_to_stream_3, 0))
-        self.connect((self.blocks_vector_to_stream_0, 0), (self.blocks_multiply_const_vxx_0, 0))
-        self.connect((self.blocks_vector_to_stream_1, 0), (self.blocks_multiply_const_vxx_1, 0))
-        self.connect((self.blocks_vector_to_stream_2, 0), (self.blocks_multiply_const_vxx_2, 0))
-        self.connect((self.blocks_vector_to_stream_3, 0), (self.blocks_multiply_const_vxx_3, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.uhd_usrp_sink_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.uhd_usrp_sink_1, 0))
-        self.connect((self.blocks_multiply_const_vxx_2, 0), (self.uhd_usrp_sink_2, 0))
-        self.connect((self.blocks_multiply_const_vxx_3, 0), (self.uhd_usrp_sink_3, 0))
+        for i in range(self.tx):
+            self.connect((self.beamnet_source_signal[i], 0), (self.reverse_fft_vxx[i], 0))
+            self.connect((self.reverse_fft_vxx[i], 0), (self.blocks_vector_to_stream[i], 0))
+            self.connect((self.blocks_vector_to_stream[i], 0), (self.blocks_multiply_const_vxx[i], 0))
+            self.connect((self.blocks_multiply_const_vxx[i], 0), (self.uhd_usrp_sink[i], 0))
+
+        #  self.connect((self.beamnet_source_signal[0], 0), (self.reverse_fft_vxx[0], 0))
+        #  self.connect((self.beamnet_source_signal[1], 0), (self.reverse_fft_vxx[1], 0))
+        #  self.connect((self.beamnet_source_signal[2], 0), (self.reverse_fft_vxx[2], 0))
+        #  self.connect((self.beamnet_source_signal[3], 0), (self.reverse_fft_vxx[3], 0))
+        #  self.connect((self.reverse_fft_vxx_0, 0), (self.blocks_vector_to_stream_0, 0))
+        #  self.connect((self.reverse_fft_vxx_1, 0), (self.blocks_vector_to_stream_1, 0))
+        #  self.connect((self.reverse_fft_vxx_2, 0), (self.blocks_vector_to_stream_2, 0))
+        #  self.connect((self.reverse_fft_vxx_3, 0), (self.blocks_vector_to_stream_3, 0))
+        #  self.connect((self.blocks_vector_to_stream_0, 0), (self.blocks_multiply_const_vxx_0, 0))
+        #  self.connect((self.blocks_vector_to_stream_1, 0), (self.blocks_multiply_const_vxx_1, 0))
+        #  self.connect((self.blocks_vector_to_stream_2, 0), (self.blocks_multiply_const_vxx_2, 0))
+        #  self.connect((self.blocks_vector_to_stream_3, 0), (self.blocks_multiply_const_vxx_3, 0))
+        #  self.connect((self.blocks_multiply_const_vxx_0, 0), (self.uhd_usrp_sink_0, 0))
+        #  self.connect((self.blocks_multiply_const_vxx_1, 0), (self.uhd_usrp_sink_1, 0))
+        #  self.connect((self.blocks_multiply_const_vxx_2, 0), (self.uhd_usrp_sink_2, 0))
+        #  self.connect((self.blocks_multiply_const_vxx_3, 0), (self.uhd_usrp_sink_3, 0))
 
         self.connect((self.uhd_usrp_source_0, 0), (self.beamnet_energy_detector_0, 0))
         self.connect((self.uhd_usrp_source_0, 0), (self.beamnet_packet_extraction_0, 0))
         self.connect((self.uhd_usrp_source_0, 0), (self.beamnet_symbol_sync_0, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.beamnet_energy_detector_0, 0), (self.beamnet_packet_extraction_0, 1))
-        self.connect((self.beamnet_energy_detector_0, 0), (self.blocks_file_sink_1, 0))
         self.connect((self.beamnet_symbol_sync_0, 0), (self.beamnet_packet_extraction_0, 2))
-        self.connect((self.beamnet_symbol_sync_0, 0), (self.blocks_file_sink_2, 0))
         self.connect((self.beamnet_packet_extraction_0, 0), (self.beamnet_packet_demux_0, 0))
-        self.connect((self.beamnet_packet_extraction_0, 0), (self.blocks_file_sink_3, 0))
-        self.msg_connect((self.beamnet_packet_demux_0, 'ce'), (self.beamnet_phase_alignment_0, 'ce'))
-        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal_0, 'phase'))
-        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal_1, 'phase'))
-        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal_2, 'phase'))
-        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal_3, 'phase'))
 
+        self.msg_connect((self.beamnet_packet_demux_0, 'ce'), (self.beamnet_phase_alignment_0, 'ce'))
+        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal[0], 'phase'))
+        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal[1], 'phase'))
+        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal[2], 'phase'))
+        #  self.msg_connect((self.beamnet_phase_alignment_0, 'phase'), (self.beamnet_source_signal[3], 'phase'))
+
+        # Debug with the file sink
+        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_file_sink_0, 0))
+        self.connect((self.beamnet_energy_detector_0, 0), (self.blocks_file_sink_1, 0))
+        self.connect((self.beamnet_symbol_sync_0, 0), (self.blocks_file_sink_2, 0))
+        self.connect((self.beamnet_packet_extraction_0, 0), (self.blocks_file_sink_3, 0))
 
     def get_tx(self):
         return self.tx

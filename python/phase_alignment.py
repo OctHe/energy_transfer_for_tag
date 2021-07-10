@@ -74,6 +74,8 @@ class phase_alignment(gr.sync_block):
         # Packet counter
         self.pkt_num = self.pkt_num + 1
 
+        print "Packet Index: ", self.pkt_num
+
         # Sync word processing
         ce_word_sig = np.zeros([self.tx * self.fft_size, 1], dtype=complex)
         ce_word_rx = np.zeros(self.tx, dtype=complex)
@@ -82,7 +84,7 @@ class phase_alignment(gr.sync_block):
             ce_word_sig[sig_index] = pmt.to_complex(pmt.vector_ref(pmt.cdr(msg), sig_index))
         ce_word_sig_reshape = np.reshape(ce_word_sig, newshape=[self.fft_size, self.tx], order='F')
 
-        ce_word_sig_reshape = np.fft.fft(ce_word_sig_reshape, n=self.fft_size, axis=0)
+        ce_word_sig_reshape = 1. / self.fft_size * np.fft.fft(ce_word_sig_reshape, n=self.fft_size, axis=0)
         ce_word_sig_reshape = np.fft.fftshift(ce_word_sig_reshape, axes=(0, ))
 
         for tx_index in range(self.tx):
@@ -95,8 +97,6 @@ class phase_alignment(gr.sync_block):
 
             self.ch_list[self.pkt_num -1, :] = self.ch_list[self.pkt_num -1, :] \
                     / self.ch_list[self.pkt_num -1, 0] * np.abs(self.ch_list[self.pkt_num -1, 0])
-
-            print "channel: ", self.ch_list
 
             if self.pkt_num < self.tag:
                 return
@@ -143,9 +143,9 @@ class phase_alignment(gr.sync_block):
         phase_opt = np.zeros([self.tx, 1], dtype=float)
         power_opt = 0
 
-        power_max = np.sum(np.abs(self.ch_list), axis=1)**2
+        rx_power_max = np.sum(np.abs(self.ch_list), axis=1)**2
 
-        print "The maximum power: ", power_max
+        print "The maximum power: ", rx_power_max
 
         for ite_index in range(ite_loop):
 
@@ -157,7 +157,7 @@ class phase_alignment(gr.sync_block):
 
             # Power comparison
             rx_power = np.abs(np.dot(self.ch_list, bf_weight))**2
-            relative_power = rx_power / power_max
+            relative_power = rx_power / rx_power_max
             power_now = np.min(relative_power)
 
             if power_now > power_opt:

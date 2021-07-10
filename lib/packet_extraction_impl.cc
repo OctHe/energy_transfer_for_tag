@@ -176,11 +176,22 @@ namespace gr {
                 return 0;
 
             case STATE_RX_PKT:
-                
+
                 for(unsigned i = 0; i < noutput_items * d_fft_size; i++)
                 {
+                    
+                    // d_offset == 0 means the start point of a packet
                     if(!d_offset)
+                    {
+                        // std::ofstream fout("timestamp.txt", std::ios::out);
                         std::cout << "Timestamp: " << d_tstamp / d_samp_rate << " s" << std::endl;
+                        // if(fout.is_open())
+                        // {
+                        //     std::cout << " File is opened" << std::endl;
+                        //     fout << "Timestamp: " << d_tstamp / d_samp_rate << std::endl;
+                        //     fout.close();
+                        // }
+                    }
 
                     out[i] = in_sig[i];
 

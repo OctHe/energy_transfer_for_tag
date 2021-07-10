@@ -5,11 +5,11 @@ close all;
 samp_rate = 1e6;
 
 read_raw_start = 0e6;     % read_start < read_size
-read_raw_size = 30e6;
+read_raw_size = 10e6;
 
 
 %% File data
-fid = fopen('debug_tag_reflection.bin', 'r');
+fid = fopen('debug_tag_reflection_bf_4x1_2.bin', 'r');
 raw = fread(fid, 2 * read_raw_size, 'float32');
 fclose(fid);
 raw = reshape(raw, 2, []).';
